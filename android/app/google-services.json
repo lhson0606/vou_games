@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "594811965904",
+    "project_id": "vougames-bc96d",
+    "storage_bucket": "vougames-bc96d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594811965904:android:83c0ec81db984ff644a9d5",
+        "android_client_info": {
+          "package_name": "com.example.vou_games"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw9TRLsZAt5_MCYTgph9TWZnjIpytSFhg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
