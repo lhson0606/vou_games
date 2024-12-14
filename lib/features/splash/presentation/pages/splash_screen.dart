@@ -5,6 +5,7 @@ import 'package:vou_games/configs/svg/app_vectors.dart';
 import 'package:vou_games/features/authentication/presentation/pages/home/landing_page.dart';
 import 'package:vou_games/features/splash/presentation/bloc/splash_cubit.dart';
 import 'package:vou_games/features/splash/presentation/bloc/splash_state.dart';
+import 'package:vou_games/injection_container.dart' as di;
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -14,13 +15,7 @@ class SplashScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return BlocListener<SplashCubit, SplashState>(
       listener: (context, state) {
-        if(state is SplashLoading)
-          {
-            Navigator.pushReplacement(context, MaterialPageRoute(
-              builder: (context) => const SplashScreen()
-            ));
-          }
-        else if (state is SplashLoaded) {
+        if (state is SplashLoaded) {
           Navigator.pushReplacement(context, MaterialPageRoute(
               builder: (context) => const LandingPage()
           ));

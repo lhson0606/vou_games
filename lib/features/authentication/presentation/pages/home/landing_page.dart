@@ -1,4 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vou_games/core/widgets/loading_widget.dart';
+import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:vou_games/features/authentication/presentation/pages/auth/sign_in_page.dart';
+import 'package:vou_games/features/homepage/presentation/pages/homepage.dart';
 
 class LandingPage extends StatefulWidget {
   final String title = 'Landing Page';
@@ -9,12 +14,24 @@ class LandingPage extends StatefulWidget {
   State<LandingPage> createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage>{
+class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
-    return const CupertinoPageScaffold(
-      child: Center(
-        child: Text('Home Page'),
+    return SafeArea(
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthLoggedOut) {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const SignIn()));
+          } else if (state is AuthNotAuthenticated) {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const SignIn()));
+          } else if(state is AuthSignedIn) {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const HomePage()));
+          }
+        },
+        child: const LoadingWidget(),
       ),
     );
   }

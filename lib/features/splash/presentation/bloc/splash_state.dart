@@ -1,7 +1,13 @@
-abstract class SplashState {}
+import 'package:equatable/equatable.dart';
 
-class SplashInitial extends SplashState {}
+abstract class SplashState extends Equatable{}
 
-class SplashLoading extends SplashState {}
+class SplashLoading extends SplashState {
+  @override
+  List<Object?> get props => [];
+}
 
-class SplashLoaded extends SplashState {}
+class SplashLoaded extends SplashState {
+  @override
+  List<Object?> get props => [];
+}

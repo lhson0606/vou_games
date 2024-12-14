@@ -7,5 +7,5 @@ class SignInEntity extends Equatable {
   const SignInEntity({ required this.password, required this.email});
 
   @override
-  List<Object?> get props => [ password, email];
+  List<Object?> get props => [password, email];
 }

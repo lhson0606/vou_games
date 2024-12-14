@@ -44,6 +44,7 @@ dependencies:
   dartz: ^0.10.1
   firebase_auth: ^5.3.4
   flutter_svg: ^2.0.16
+  bloc: ^8.1.4
   flutter_bloc: ^8.1.6
 
 dev_dependencies:
