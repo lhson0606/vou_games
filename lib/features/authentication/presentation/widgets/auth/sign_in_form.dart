@@ -84,7 +84,10 @@ class _LoginFormState extends State<LoginForm> {
                 return Column(
                   children: [
                     Center(
-                      child: Text(state.message),
+                      child: Text(
+                        state.message,
+                        style: TextStyle(color: Theme.of(context).colorScheme.error),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
