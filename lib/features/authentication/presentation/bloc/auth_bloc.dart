@@ -8,6 +8,7 @@ import 'package:vou_games/features/authentication/domain/entities/sign_in_entity
 import 'package:vou_games/features/authentication/domain/usescases/sign_in_usecase.dart';
 
 part 'auth_event.dart';
+
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -17,27 +18,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.signInUsecase,
   }) : super(AuthInitial()) {
     on<AuthEvent>((event, emit) async {
-      if(event is SignInWithEmailAndPassEvent) {
+      if (event is SignInWithEmailAndPassEvent) {
         emit(AuthLoading());
         var signInEntity = event.signInEntity;
         final failureOrUserCredential = await signInUsecase(signInEntity);
         emit(eitherToState(failureOrUserCredential, AuthSignedIn()));
-      }
-      else if(event is AuthLoggedOutEvent){
+      } else if (event is AuthLoggedOutEvent) {
         emit(AuthLoading());
         emit(AuthLoggedOut());
-      }
-      else if(event is CheckLoggingInEvent){
+      } else if (event is CheckLoggingInEvent) {
         emit(AuthLoading());
         bool isSignedIn = false;
 
-        if(isSignedIn) {
+        if (isSignedIn) {
           emit(AuthSignedIn());
-        } else{
+        } else {
           emit(AuthNotAuthenticated());
         }
-      }
-      else if(event is AuthSignedInEvent) {
+      } else if (event is AuthSignedInEvent) {
         emit(AuthLoading());
         emit(AuthSignedIn());
       }

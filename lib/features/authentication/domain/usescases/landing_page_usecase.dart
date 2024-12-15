@@ -6,7 +6,7 @@ class LandingPageUsecase {
 
   LandingPageUsecase(this.repository);
 
-  LandingPageEntity call(){
-    return  repository.landingPage();
+  LandingPageEntity call() {
+    return repository.landingPage();
   }
 }

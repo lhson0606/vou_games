@@ -17,9 +17,9 @@ Future<void> init() async {
   //============= Usecases =============
   sl.registerLazySingleton(() => SignInUsecase(sl<AuthenticationRepository>()));
 
-
   //============= Repository =============
-  sl.registerLazySingleton<AuthenticationRepository>(() => AuthRepositoryImpl(networkInfo: sl(), authDataSource: sl()));
+  sl.registerLazySingleton<AuthenticationRepository>(
+      () => AuthRepositoryImpl(networkInfo: sl(), authDataSource: sl()));
   //============= Datasources =============
   sl.registerLazySingleton<AuthDataSource>(() => AuthFirebaseDataSource());
 

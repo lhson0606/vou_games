@@ -44,7 +44,8 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   }
 
   @override
-  Future<Either<Failure, UserCredential>> signIn(SignInEntity signInPayload) async {
+  Future<Either<Failure, UserCredential>> signIn(
+      SignInEntity signInPayload) async {
     // if (await networkInfo.isConnected.timeout(const Duration(seconds: 10), onTimeout: () => false)) {
     //   try {
     //     SignInModel signInModel = SignInModel(email: signInPayload.email, password: signInPayload.password);
@@ -62,8 +63,11 @@ class AuthRepositoryImpl implements AuthenticationRepository {
     // }
 
     try {
-      SignInModel signInModel = SignInModel(email: signInPayload.email, password: signInPayload.password);
-      final userCredential = await authDataSource.signIn(signInModel).timeout(const Duration(seconds: 10), onTimeout: () => throw ServerException());
+      SignInModel signInModel = SignInModel(
+          email: signInPayload.email, password: signInPayload.password);
+      final userCredential = await authDataSource.signIn(signInModel).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => throw ServerException());
       return Right(userCredential);
     } on ExistedAccountException {
       return Left(ExistedAccountFailure());

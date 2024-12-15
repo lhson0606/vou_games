@@ -28,7 +28,7 @@ class AuthFirebaseDataSource extends AuthDataSource {
         throw NoUserException();
       } else if (e.code == 'wrong-password') {
         throw WrongPasswordException();
-      }else{
+      } else {
         throw ServerException();
       }
     }
@@ -45,5 +45,4 @@ class AuthFirebaseDataSource extends AuthDataSource {
     // TODO: implement verifyEmail
     throw UnimplementedError();
   }
-
 }

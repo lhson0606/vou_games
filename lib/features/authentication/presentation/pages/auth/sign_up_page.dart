@@ -9,12 +9,11 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    return  SafeArea(
+    return SafeArea(
       child: Scaffold(
         backgroundColor: theme.colorScheme.inversePrimary,
         body: ListView(
@@ -27,8 +26,13 @@ class _SignUpState extends State<SignUp> {
                   image: AssetImage("assets/sign_in.png")),
             ),
             Center(
-                child: Text("Signup", style: TextStyle(fontSize: 25 , fontWeight: FontWeight.bold),)),
-            SizedBox(height: 10,),
+                child: Text(
+              "Signup",
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            )),
+            SizedBox(
+              height: 10,
+            ),
             SignUpForm(),
           ],
         ),

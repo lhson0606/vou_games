@@ -11,12 +11,16 @@ import '../entities/sign_up_entity.dart';
 
 abstract class AuthenticationRepository {
   Future<Either<Failure, UserCredential>> signIn(SignInEntity signInPayload);
+
   Future<Either<Failure, UserCredential>> signUp(SignUpEntity signUpPalLoad);
+
   Future<Either<Failure, UserCredential>> googleSignIn();
 
-  Future<Either<Failure, Unit>>  verifyEmail();
+  Future<Either<Failure, Unit>> verifyEmail();
+
   Future<Either<Failure, Unit>> checkEmailVerification(Completer completer);
-  Future<Either<Failure, Unit>>  logOut();
+
+  Future<Either<Failure, Unit>> logOut();
 
   LandingPageEntity landingPage();
 }
