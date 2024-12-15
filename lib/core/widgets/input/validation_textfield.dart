@@ -8,6 +8,7 @@ class ValidationTextField extends StatefulWidget {
   final IconData? icon;
   final TextInputType? keyboardType;
   final TextEditingController controller;
+  final bool isPassword;
 
   ValidationTextField({
     super.key,
@@ -17,6 +18,7 @@ class ValidationTextField extends StatefulWidget {
     this.onChanged,
     this.keyboardType = TextInputType.text,
     this.icon,
+    this.isPassword = false,
     TextEditingController? controller,
   }) : controller = controller ?? TextEditingController();
 
@@ -24,11 +26,11 @@ class ValidationTextField extends StatefulWidget {
   ValidationTextFieldState createState() => ValidationTextFieldState();
 
   String get text => controller.text;
-
 }
 
 class ValidationTextFieldState extends State<ValidationTextField> {
   String? errorText;
+  bool isVisible = false;
 
   get text => widget.controller.text;
 
@@ -56,7 +58,7 @@ class ValidationTextFieldState extends State<ValidationTextField> {
       decoration: InputDecoration(
         hintText: widget.hintText,
         labelText: widget.labelText,
-        icon: widget.icon != null ? Icon(widget.icon) : null,
+        prefixIcon: widget.icon != null ? Icon(widget.icon) : null,
         errorText: errorText,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -69,10 +71,24 @@ class ValidationTextFieldState extends State<ValidationTextField> {
           borderRadius: BorderRadius.circular(10.0),
           borderSide: const BorderSide(color: Colors.grey),
         ),
+        suffixIcon: widget.isPassword
+            ? IconButton(
+          icon: Icon(
+            isVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            setState(() {
+              isVisible = !isVisible;
+            });
+          },
+        )
+            : null,
       ),
       keyboardType: widget.keyboardType,
       validator: widget.validator,
       controller: widget.controller,
+      obscureText: widget.isPassword && !isVisible,
       onChanged: (value) {
         if (widget.validator != null) {
           setState(() {

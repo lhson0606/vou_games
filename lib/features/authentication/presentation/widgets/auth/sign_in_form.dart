@@ -54,6 +54,7 @@ class _LoginFormState extends State<LoginForm> {
                 hintText: 'Username',
                 labelText: 'Username',
                 validator: emailValidator,
+                icon: Icons.person,
               ),
             ),
             const SizedBox(
@@ -66,6 +67,8 @@ class _LoginFormState extends State<LoginForm> {
                 hintText: 'Password',
                 labelText: 'Password',
                 validator: passwordValidator,
+                icon: Icons.lock,
+                isPassword: true,
               ),
             ),
             const SizedBox(
