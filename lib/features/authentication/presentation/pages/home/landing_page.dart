@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vou_games/core/widgets/loading_widget.dart';
+import 'package:vou_games/core/widgets/loading/loading_widget.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:vou_games/features/authentication/presentation/pages/auth/sign_in_page.dart';
 import 'package:vou_games/features/homepage/presentation/pages/homepage.dart';

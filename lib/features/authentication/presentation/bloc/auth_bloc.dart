@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/strings/failure_message.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
@@ -14,11 +15,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({
     required this.signInUsecase,
-}) : super(AuthInitial()) {
+  }) : super(AuthInitial()) {
     on<AuthEvent>((event, emit) async {
       if(event is SignInWithEmailAndPassEvent) {
         emit(AuthLoading());
-        final failureOrUserCredential = await signInUsecase(event.signInEntity);
+        var signInEntity = event.signInEntity;
+        final failureOrUserCredential = await signInUsecase(signInEntity);
         emit(eitherToState(failureOrUserCredential, AuthSignedIn()));
       }
       else if(event is AuthLoggedOutEvent){

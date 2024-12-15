@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vou_games/core/utils/validators/validators.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:vou_games/features/authentication/presentation/pages/auth/sign_up_page.dart';
 import 'package:vou_games/features/homepage/presentation/pages/homepage.dart';
 
+import '../../../../../core/widgets/input/validation_textfield.dart';
 import '../../pages/auth/sign_in_page.dart';
 
 
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({Key? key}) : super(key: key);
+  const LoginForm({super.key});
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -18,9 +20,35 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+
+  ValidationTextField usernameField = ValidationTextField(
+    hintText: 'Username',
+    labelText: 'Username',
+    keyboardType: TextInputType.emailAddress,
+    validator: emailValidator,
+  );
+
+  ValidationTextField passwordField = ValidationTextField(
+    hintText: 'Password',
+    labelText: 'Password',
+    keyboardType: TextInputType.visiblePassword,
+    validator: passwordValidator,
+  );
+
   bool isVisible = false;
+
+  bool _isFormValid(){
+    return _formKey.currentState!.validate() && usernameField.isValid && passwordField.isValid;
+  }
+
+  void _submitForm(){
+    if(_isFormValid()){
+      BlocProvider.of<AuthBloc>(context).add(SignInWithEmailAndPassEvent(signInEntity: SignInEntity(password: passwordField.text , email: usernameField.text)));
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter valid details')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -34,54 +62,14 @@ class _LoginFormState extends State<LoginForm> {
                   constraints: const BoxConstraints(
                       maxWidth: 500
                   ),
-                  child: TextFormField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your E-Mail';
-                      } else if (false) {
-                        return 'Please enter a valid E-Mail';
-                      }
-                      return null;
-                    },
-                  ),
+                  child: usernameField,
                 ),
                 const SizedBox(height: 20,),
                 ConstrainedBox(
                   constraints: const BoxConstraints(
                       maxWidth: 500
                   ),
-                  child: TextFormField(
-                    controller: _passwordController,
-                    obscureText:isVisible?false : true,
-                    decoration:  InputDecoration(
-                      labelText: 'Password',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon:  Icon(
-                          isVisible ? Icons.visibility : Icons.visibility_off,
-                          color: Colors.grey,
-                        ), onPressed: () {
-                        setState(() {
-                          isVisible = !isVisible;
-                        });
-                      },
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your password';
-                      } else if (value.length < 5) {
-                        return 'The password must contains more than five characters.';
-                      }
-                      return null;
-                    },
-                  ),
+                  child: passwordField,
                 ),
                 const SizedBox(height: 20,),
                 BlocConsumer<AuthBloc, AuthState>(
@@ -98,7 +86,7 @@ class _LoginFormState extends State<LoginForm> {
                             ),
                             ElevatedButton(
                               onPressed: (){
-                                BlocProvider.of<AuthBloc>(context).add(AuthSignedInEvent());
+                                _submitForm();
                               },
                               style: ButtonStyle(
                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
@@ -115,7 +103,7 @@ class _LoginFormState extends State<LoginForm> {
                       }
                       return ElevatedButton(
                         onPressed: (){
-                          BlocProvider.of<AuthBloc>(context).add(AuthSignedInEvent());
+                          _submitForm();
                         },
                         style:  ButtonStyle(
                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(

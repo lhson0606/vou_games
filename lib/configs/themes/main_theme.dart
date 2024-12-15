@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class MainTheme {
 
-  static const Color primaryColor01 = Color(0xFFFF6666);
-  static const Color primaryColor02 = Color(0xFFFF8989);
-  static const Color primaryColor03 = Color(0xFFFCAEAE);
-  static const Color primaryColor04 = Color(0xFFFFEADD);
-  static const Color primaryColor05 = Color(0xFFFFeadd);
+  static const Color primaryColor01 = Color(0xFF4A628A);
+  static const Color primaryColor02 = Color(0xFF7FC7D9);
+  static const Color primaryColor03 = Color(0xFFB9E5E8);
+  static const Color primaryColor04 = Color(0xFFDCF2F1);
+  static const Color primaryColor05 = Color(0xFFDFF2EB);
 
-  static const Color textContrast01 = Colors.redAccent;
+  static const Color textContrast01 = Color(0xFF0F1035);
 
-  static const Color inversePrimary = Colors.redAccent;
+  static const Color inversePrimary = primaryColor01;
 
   static ThemeData get themeData {
     return ThemeData(
