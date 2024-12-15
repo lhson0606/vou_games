@@ -25,11 +25,24 @@ class ValidationTextField extends StatefulWidget {
 
   String get text => controller.text;
 
-  bool get isValid => validator == null || validator!(text) == null;
 }
 
 class ValidationTextFieldState extends State<ValidationTextField> {
   String? errorText;
+
+  get text => widget.controller.text;
+
+  void validate() {
+    setState(() {
+      errorText = widget.validator!(widget.controller.text);
+    });
+  }
+
+  bool isValid() {
+    //validate the field
+    validate();
+    return errorText == null;
+  }
 
   @override
   void dispose() {

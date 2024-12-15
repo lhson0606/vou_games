@@ -7,7 +7,6 @@ import 'package:vou_games/features/authentication/presentation/pages/auth/sign_u
 import 'package:vou_games/features/homepage/presentation/pages/homepage.dart';
 
 import '../../../../../core/widgets/input/validation_textfield.dart';
-import '../../pages/auth/sign_in_page.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -18,34 +17,21 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-
-  ValidationTextField usernameField = ValidationTextField(
-    hintText: 'Username',
-    labelText: 'Username',
-    keyboardType: TextInputType.emailAddress,
-    validator: emailValidator,
-  );
-
-  ValidationTextField passwordField = ValidationTextField(
-    hintText: 'Password',
-    labelText: 'Password',
-    keyboardType: TextInputType.visiblePassword,
-    validator: passwordValidator,
-  );
-
-  bool isVisible = false;
+  final _usernameFieldKey = GlobalKey<ValidationTextFieldState>();
+  final _passwordFieldKey = GlobalKey<ValidationTextFieldState>();
 
   bool _isFormValid() {
-    return _formKey.currentState!.validate() &&
-        usernameField.isValid &&
-        passwordField.isValid;
+    // validate all fields to show error messages
+    _usernameFieldKey.currentState!.validate();
+    _passwordFieldKey.currentState!.validate();
+    return _usernameFieldKey.currentState!.isValid() && _passwordFieldKey.currentState!.isValid();
   }
 
   void _submitForm() {
     if (_isFormValid()) {
       BlocProvider.of<AuthBloc>(context).add(SignInWithEmailAndPassEvent(
           signInEntity: SignInEntity(
-              password: passwordField.text, email: usernameField.text)));
+              password: _usernameFieldKey.currentState!.text, email: _usernameFieldKey.currentState!.text)));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please enter valid details')));
@@ -63,14 +49,24 @@ class _LoginFormState extends State<LoginForm> {
           children: <Widget>[
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
-              child: usernameField,
+              child: ValidationTextField(
+                key: _usernameFieldKey,
+                hintText: 'Username',
+                labelText: 'Username',
+                validator: emailValidator,
+              ),
             ),
             const SizedBox(
               height: 20,
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
-              child: passwordField,
+              child: ValidationTextField(
+                key: _passwordFieldKey,
+                hintText: 'Password',
+                labelText: 'Password',
+                validator: passwordValidator,
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -86,7 +82,8 @@ class _LoginFormState extends State<LoginForm> {
                     Center(
                       child: Text(
                         state.message,
-                        style: TextStyle(color: Theme.of(context).colorScheme.error),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error),
                       ),
                     ),
                     ElevatedButton(

@@ -70,6 +70,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '594811965904',
     projectId: 'vougames-bc96d',
     storageBucket: 'vougames-bc96d.firebasestorage.app',
+    iosClientId: '594811965904-nrrhcc9n1re8n0vh9fhlk45ef3vjnbj4.apps.googleusercontent.com',
     iosBundleId: 'com.example.vouGames',
   );
 

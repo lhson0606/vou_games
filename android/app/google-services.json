@@ -12,7 +12,12 @@
           "package_name": "com.example.vou_games"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "594811965904-1aul58t15rskt0sf6rs3t6hom1spunft.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBw9TRLsZAt5_MCYTgph9TWZnjIpytSFhg"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594811965904-1aul58t15rskt0sf6rs3t6hom1spunft.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "594811965904-nrrhcc9n1re8n0vh9fhlk45ef3vjnbj4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.vouGames"
+              }
+            }
+          ]
         }
       }
     }

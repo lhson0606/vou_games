@@ -61,6 +61,12 @@ class AuthRepositoryImpl implements AuthenticationRepository {
         return Left(WrongPasswordFailure());
       } on ServerException {
         return Left(ServerFailure());
+      } on TooManyRequestsException {
+        return Left(TooManyRequestsFailure());
+      } on NoUserException{
+        return Left(NoUserFailure());
+      }on Exception {
+        return Left(ServerFailure());
       }
     } else {
       return Left(OfflineFailure());

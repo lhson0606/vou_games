@@ -16,21 +16,27 @@ class AuthFirebaseDataSource extends AuthDataSource {
   }
 
   @override
-  Future<UserCredential> signIn(SignInModel signIn) {
+  Future<UserCredential> signIn(SignInModel signIn) async {
     try {
       firebaseAuth.currentUser?.reload();
-      return firebaseAuth.signInWithEmailAndPassword(
+      var res = await firebaseAuth.signInWithEmailAndPassword(
         email: signIn.email,
         password: signIn.password,
       );
+      return res;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw NoUserException();
-      } else if (e.code == 'wrong-password') {
+      } else if (e.code == 'wrong-password' || e.code =='invalid-credential') {
         throw WrongPasswordException();
-      } else {
+      } else if(e.code == 'too-many-requests'){
+        throw TooManyRequestsException();
+      }
+      else {
         throw ServerException();
       }
+    } on Exception {
+      throw ServerException();
     }
   }
 
