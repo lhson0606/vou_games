@@ -1,7 +1,6 @@
 class UserCredentialService {
   bool isLoggedIn;
-  bool hasRememberedUser;
-  String userToken = '';
+  String? userToken;
 
-  UserCredentialService({this.isLoggedIn = false, this.hasRememberedUser = false});
+  UserCredentialService({this.isLoggedIn = false});
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/strings/failure_message.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
+import 'package:vou_games/features/authentication/domain/usescases/check_logged_in_usecase.dart';
 import 'package:vou_games/features/authentication/domain/usescases/log_out_usecase.dart';
 import 'package:vou_games/features/authentication/domain/usescases/sign_in_usecase.dart';
 
@@ -15,10 +16,12 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInUseCase signInUsecase;
   final LogOutUseCase logOutUseCase;
+  final CheckLoggedInUseCase checkLoggedInUseCase;
 
   AuthBloc({
     required this.signInUsecase,
     required this.logOutUseCase,
+    required this.checkLoggedInUseCase,
   }) : super(AuthInitialState()) {
     on<AuthEvent>((event, emit) async {
       if (event is SignInWithEmailAndPassEvent) {
@@ -28,21 +31,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(eitherToState(failureOrUserCredential, AuthSignedInState()));
       } else if (event is AuthLoggedOutEvent) {
         emit(AuthLoadingLoggedOutState());
-        // mock waiting for 2 seconds
-        await Future.delayed(const Duration(seconds: 2));
+        // mock waiting for 1 seconds
+        await Future.delayed(const Duration(seconds: 1));
         final failureOrUnit = await logOutUseCase();
-        // mock failure
-        emit(AuthErrorState(message: failureToErrorMessage(UnknownFailure())));
-        // emit(eitherToState(failureOrUnit, AuthLoggedOutState()));
+        emit(eitherToState(failureOrUnit, AuthLoggedOutState()));
       } else if (event is CheckLoggingInEvent) {
         emit(AuthLoadingState());
-        bool isSignedIn = false;
+        final failureOrAuthInfo = await checkLoggedInUseCase();
+        failureOrAuthInfo.fold(
+                (failure) => emit(AuthErrorState(message: failureToErrorMessage(failure))),
+                (authInfo) {
+              if (authInfo.isLoggedIn) {
+                emit(AuthSignedInState());
+              } else {
+                emit(AuthNotAuthenticatedState());
+              }
+            }
+        );
 
-        if (isSignedIn) {
-          emit(AuthSignedInState());
-        } else {
-          emit(AuthNotAuthenticatedState());
-        }
       } else if (event is AuthSignedInEvent) {
         emit(AuthLoadingState());
         emit(AuthSignedInState());

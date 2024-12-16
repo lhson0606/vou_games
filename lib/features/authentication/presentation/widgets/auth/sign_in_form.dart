@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vou_games/core/utils/validators/validators.dart';
+import 'package:vou_games/core/widgets/display/snack_bar.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:vou_games/features/authentication/presentation/pages/auth/sign_up_page.dart';
@@ -33,8 +34,7 @@ class _LoginFormState extends State<LoginForm> {
           signInEntity: SignInEntity(
               email: _usernameFieldKey.currentState!.text, password: _passwordFieldKey.currentState!.text)));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter valid details')));
+      showSnackBar(context, "Form contains errors", type: SnackBarType.error);
     }
   }
 

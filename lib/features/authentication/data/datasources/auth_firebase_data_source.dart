@@ -60,4 +60,23 @@ class AuthFirebaseDataSource extends AuthDataSource {
       throw ServerException();
     }
   }
+
+  // return token of the user
+  @override
+  Future<String?> checkStoredUser() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String? token = await user.getIdToken();
+        return token;
+      } else {
+        // User is not signed in
+        return null;
+      }
+    } catch (e) {
+      // Handle error
+      print('Error getting token: $e');
+      return null;
+    }
+  }
 }

@@ -7,11 +7,12 @@ import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/shared_preferences_service.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
 import 'package:vou_games/features/authentication/data/datasources/auth_remote_data_source_contract.dart';
+import 'package:vou_games/features/authentication/data/models/auth_info_model.dart';
 import 'package:vou_games/features/authentication/data/models/sign_in_model.dart';
 import 'package:vou_games/features/authentication/domain/entities/landing_page_entity.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_up_entity.dart';
-import 'package:vou_games/features/authentication/domain/entities/stored_token_entity.dart';
+import 'package:vou_games/features/authentication/domain/entities/auth_info_entity.dart';
 import 'package:vou_games/features/authentication/domain/repositories/authentication_repository.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -103,8 +104,16 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   }
 
   @override
-  Future<Either<Failure, StoredTokenEntity>> storedToken() {
-    // TODO: implement storedToken
-    throw UnimplementedError();
+  Future<Either<Failure, AuthInfoEntity>> checkAuthInfo() async {
+    if (!(await networkInfo.isConnected
+        .timeout(const Duration(seconds: 10), onTimeout: () => false))) {
+      return Left(OfflineFailure());
+    }
+    String? tokenString = await authDataSource.checkStoredUser();
+    AuthInfoModel authInfoModel = AuthInfoModel(isLoggedIn: tokenString != null, userToken: tokenString);
+    AuthInfoEntity authInfoEntity = authInfoModel;
+    userCredentialService.isLoggedIn = authInfoModel.isLoggedIn;
+    userCredentialService.userToken = authInfoModel.userToken;
+    return Right(authInfoEntity);
   }
 }

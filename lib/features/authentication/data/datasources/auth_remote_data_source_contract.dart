@@ -13,4 +13,6 @@ abstract class AuthDataSource {
   Future<Unit> verifyEmail();
 
   Future<Unit> logOut();
+
+  Future<String?> checkStoredUser();
 }
