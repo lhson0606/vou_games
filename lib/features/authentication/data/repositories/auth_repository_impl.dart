@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vou_games/core/error/failures.dart';
-import 'package:vou_games/core/network/network_info.dart';
+import 'package:vou_games/core/services/network/network_info.dart';
+import 'package:vou_games/core/services/shared_preferences_service.dart';
+import 'package:vou_games/core/services/user_credential_service.dart';
 import 'package:vou_games/features/authentication/data/datasources/auth_remote_data_source_contract.dart';
 import 'package:vou_games/features/authentication/data/models/sign_in_model.dart';
 import 'package:vou_games/features/authentication/domain/entities/landing_page_entity.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_up_entity.dart';
+import 'package:vou_games/features/authentication/domain/entities/stored_token_entity.dart';
 import 'package:vou_games/features/authentication/domain/repositories/authentication_repository.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -16,8 +19,14 @@ import '../../../../core/error/exceptions.dart';
 class AuthRepositoryImpl implements AuthenticationRepository {
   final AuthDataSource authDataSource;
   final NetworkInfo networkInfo;
+  final SharedPreferencesService sharedPreferencesService;
+  final UserCredentialService userCredentialService;
 
-  AuthRepositoryImpl({required this.networkInfo, required this.authDataSource});
+  AuthRepositoryImpl(
+      {required this.networkInfo,
+      required this.authDataSource,
+      required this.sharedPreferencesService,
+      required this.userCredentialService});
 
   @override
   Future<Either<Failure, Unit>> checkEmailVerification(Completer completer) {
@@ -41,7 +50,8 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   Future<Either<Failure, Unit>> logOut() async {
     try {
       final logOutUnit = await authDataSource.logOut().timeout(
-          const Duration(seconds: 10), onTimeout: () => throw ServerException());
+          const Duration(seconds: 10),
+          onTimeout: () => throw ServerException());
       return Right(logOutUnit);
     } on ServerException {
       return Left(ServerFailure());
@@ -70,9 +80,9 @@ class AuthRepositoryImpl implements AuthenticationRepository {
         return Left(ServerFailure());
       } on TooManyRequestsException {
         return Left(TooManyRequestsFailure());
-      } on NoUserException{
+      } on NoUserException {
         return Left(NoUserFailure());
-      }on Exception {
+      } on Exception {
         return Left(ServerFailure());
       }
     } else {
@@ -89,6 +99,12 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   @override
   Future<Either<Failure, Unit>> verifyEmail() {
     // TODO: implement verifyEmail
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, StoredTokenEntity>> storedToken() {
+    // TODO: implement storedToken
     throw UnimplementedError();
   }
 }

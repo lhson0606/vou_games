@@ -11,7 +11,9 @@ plugins {
 android {
     namespace = "com.example.vou_games"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "25.1.8937393"
+    // used to be flutter.sdk
+    // fix https://github.com/flutter/flutter/pull/157132
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vou_games/features/authentication/domain/entities/landing_page_entity.dart';
+import 'package:vou_games/features/authentication/domain/entities/stored_token_entity.dart';
 import 'package:vou_games/features/authentication/domain/usescases/landing_page_usecase.dart';
 
 import '../../../../core/error/failures.dart';
@@ -21,6 +22,8 @@ abstract class AuthenticationRepository {
   Future<Either<Failure, Unit>> checkEmailVerification(Completer completer);
 
   Future<Either<Failure, Unit>> logOut();
+
+  Future<Either<Failure, StoredTokenEntity>> storedToken();
 
   LandingPageEntity landingPage();
 }
