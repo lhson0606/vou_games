@@ -2,38 +2,47 @@ part of 'auth_bloc.dart';
 
 sealed class AuthState extends Equatable {
   const AuthState();
-}
 
-class AuthInitial extends AuthState {
   @override
   List<Object> get props => [];
 }
 
-class AuthNotAuthenticated extends AuthState {
+class AuthInitialState extends AuthState {
   @override
   List<Object> get props => [];
 }
 
-class AuthLoggedOut extends AuthState {
+class AuthNotAuthenticatedState extends AuthState {
   @override
   List<Object> get props => [];
 }
 
-class AuthLoading extends AuthState {
+class AuthLoggedOutState extends AuthState {
   @override
   List<Object> get props => [];
 }
 
-class AuthError extends AuthState {
+class AuthLoadingState extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class AuthLoadingLoggedOutState extends AuthState {
+  @override
+  List<Object> get props => [];
+}
+
+class AuthErrorState extends AuthState {
   final String message;
+  final DateTime timestamp;
 
-  const AuthError({required this.message});
+  AuthErrorState({required this.message}) : timestamp = DateTime.now();
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, timestamp];
 }
 
-class AuthSignedIn extends AuthState {
+class AuthSignedInState extends AuthState {
   @override
   List<Object> get props => [];
 }

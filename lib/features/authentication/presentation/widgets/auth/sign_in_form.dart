@@ -31,7 +31,7 @@ class _LoginFormState extends State<LoginForm> {
     if (_isFormValid()) {
       BlocProvider.of<AuthBloc>(context).add(SignInWithEmailAndPassEvent(
           signInEntity: SignInEntity(
-              password: _usernameFieldKey.currentState!.text, email: _usernameFieldKey.currentState!.text)));
+              email: _usernameFieldKey.currentState!.text, password: _passwordFieldKey.currentState!.text)));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please enter valid details')));
@@ -75,11 +75,11 @@ class _LoginFormState extends State<LoginForm> {
               height: 20,
             ),
             BlocConsumer<AuthBloc, AuthState>(builder: (context, state) {
-              if (state is AuthLoading) {
+              if (state is AuthLoadingState) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
-              } else if (state is AuthError) {
+              } else if (state is AuthErrorState) {
                 return Column(
                   children: [
                     Center(
@@ -125,7 +125,7 @@ class _LoginFormState extends State<LoginForm> {
                 child: const Text('Login'),
               );
             }, listener: (context, state) {
-              if (state is AuthSignedIn) {
+              if (state is AuthSignedInState) {
                 Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (context) => const HomePage()));
               }

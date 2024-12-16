@@ -11,4 +11,6 @@ abstract class AuthDataSource {
   Future<UserCredential> googleAuthentication();
 
   Future<Unit> verifyEmail();
+
+  Future<Unit> logOut();
 }

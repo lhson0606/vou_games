@@ -27,7 +27,7 @@ class AuthFirebaseDataSource extends AuthDataSource {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw NoUserException();
-      } else if (e.code == 'wrong-password' || e.code =='invalid-credential') {
+      } else if (e.code == 'wrong-password' || e.code =='invalid-credential' || e.code == 'invalid-email') {
         throw WrongPasswordException();
       } else if(e.code == 'too-many-requests'){
         throw TooManyRequestsException();
@@ -50,5 +50,14 @@ class AuthFirebaseDataSource extends AuthDataSource {
   Future<Unit> verifyEmail() {
     // TODO: implement verifyEmail
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Unit> logOut() {
+    try {
+      return firebaseAuth.signOut().then((value) => Future.value(unit));
+    } on FirebaseAuthException catch (e) {
+      throw ServerException();
+    }
   }
 }

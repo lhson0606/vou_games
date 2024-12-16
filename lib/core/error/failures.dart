@@ -43,3 +43,7 @@ class TooManyRequestsFailure extends Failure{
   @override
   List<Object?> get props => throw UnimplementedError();
 }
+class UnknownFailure extends Failure{
+  @override
+  List<Object?> get props => throw UnimplementedError();
+}

@@ -38,9 +38,16 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> logOut() {
-    // TODO: implement logOut
-    throw UnimplementedError();
+  Future<Either<Failure, Unit>> logOut() async {
+    try {
+      final logOutUnit = await authDataSource.logOut().timeout(
+          const Duration(seconds: 10), onTimeout: () => throw ServerException());
+      return Right(logOutUnit);
+    } on ServerException {
+      return Left(ServerFailure());
+    } on Exception {
+      return Left(UnknownFailure());
+    }
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:vou_games/features/authentication/data/datasources/auth_firebase
 import 'package:vou_games/features/authentication/data/datasources/auth_remote_data_source_contract.dart';
 import 'package:vou_games/features/authentication/data/repositories/auth_repository_impl.dart';
 import 'package:vou_games/features/authentication/domain/repositories/authentication_repository.dart';
+import 'package:vou_games/features/authentication/domain/usescases/log_out_usecase.dart';
 import 'package:vou_games/features/authentication/domain/usescases/sign_in_usecase.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 
@@ -13,9 +14,13 @@ Future<void> init() async {
   //============= Features - posts =============
 
   //============= Bloc =============
-  sl.registerFactory(() => AuthBloc(signInUsecase: sl<SignInUsecase>()));
+  sl.registerFactory(() => AuthBloc(
+      signInUsecase: sl<SignInUseCase>(),
+      logOutUseCase: sl<LogOutUseCase>(),
+  ));
   //============= Usecases =============
-  sl.registerLazySingleton(() => SignInUsecase(sl<AuthenticationRepository>()));
+  sl.registerLazySingleton(() => SignInUseCase(sl<AuthenticationRepository>()));
+  sl.registerLazySingleton(() => LogOutUseCase(sl<AuthenticationRepository>()));
 
   //============= Repository =============
   sl.registerLazySingleton<AuthenticationRepository>(

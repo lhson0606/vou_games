@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/strings/failure_message.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
+import 'package:vou_games/features/authentication/domain/usescases/log_out_usecase.dart';
 import 'package:vou_games/features/authentication/domain/usescases/sign_in_usecase.dart';
 
 part 'auth_event.dart';
@@ -12,39 +13,46 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final SignInUsecase signInUsecase;
+  final SignInUseCase signInUsecase;
+  final LogOutUseCase logOutUseCase;
 
   AuthBloc({
     required this.signInUsecase,
-  }) : super(AuthInitial()) {
+    required this.logOutUseCase,
+  }) : super(AuthInitialState()) {
     on<AuthEvent>((event, emit) async {
       if (event is SignInWithEmailAndPassEvent) {
-        emit(AuthLoading());
+        emit(AuthLoadingState());
         var signInEntity = event.signInEntity;
         final failureOrUserCredential = await signInUsecase(signInEntity);
-        emit(eitherToState(failureOrUserCredential, AuthSignedIn()));
+        emit(eitherToState(failureOrUserCredential, AuthSignedInState()));
       } else if (event is AuthLoggedOutEvent) {
-        emit(AuthLoading());
-        emit(AuthLoggedOut());
+        emit(AuthLoadingLoggedOutState());
+        // mock waiting for 2 seconds
+        await Future.delayed(const Duration(seconds: 2));
+        final failureOrUnit = await logOutUseCase();
+        // mock failure
+        emit(AuthErrorState(message: failureToErrorMessage(UnknownFailure())));
+        // emit(eitherToState(failureOrUnit, AuthLoggedOutState()));
       } else if (event is CheckLoggingInEvent) {
-        emit(AuthLoading());
+        emit(AuthLoadingState());
         bool isSignedIn = false;
 
         if (isSignedIn) {
-          emit(AuthSignedIn());
+          emit(AuthSignedInState());
         } else {
-          emit(AuthNotAuthenticated());
+          emit(AuthNotAuthenticatedState());
         }
       } else if (event is AuthSignedInEvent) {
-        emit(AuthLoading());
-        emit(AuthSignedIn());
+        emit(AuthLoadingState());
+        emit(AuthSignedInState());
       }
     });
   }
 
   AuthState eitherToState(Either either, AuthState state) {
     return either.fold(
-        (failure) => AuthError(message: failureToErrorMessage(failure)),
+        (failure) => AuthErrorState(message: failureToErrorMessage(failure)),
         (_) => state);
   }
 

@@ -4,10 +4,10 @@ import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
 import 'package:vou_games/features/authentication/domain/repositories/authentication_repository.dart';
 
-class SignInUsecase {
+class SignInUseCase {
   final AuthenticationRepository repository;
 
-  SignInUsecase(this.repository);
+  SignInUseCase(this.repository);
 
   Future<Either<Failure, UserCredential>> call(
       SignInEntity signInPayload) async {
