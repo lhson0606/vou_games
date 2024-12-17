@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/strings/failure_message.dart';
 import 'package:vou_games/features/authentication/domain/entities/sign_in_entity.dart';
