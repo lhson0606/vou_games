@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vou_games/configs/svg/app_vectors.dart';
 import 'package:vou_games/features/authentication/presentation/pages/home/landing_page.dart';
-import 'package:vou_games/features/splash/presentation/bloc/splash_cubit.dart';
-import 'package:vou_games/features/splash/presentation/bloc/splash_state.dart';
+import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
+import 'package:vou_games/features/authentication/presentation/bloc/splash_state.dart';
 import 'package:vou_games/injection_container.dart' as di;
 
 class SplashScreen extends StatelessWidget {

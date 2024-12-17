@@ -1,4 +1,4 @@
-import 'package:vou_games/features/splash/presentation/bloc/splash_state.dart';
+import 'package:vou_games/features/authentication/presentation/bloc/splash_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SplashCubit extends Cubit<SplashState> {

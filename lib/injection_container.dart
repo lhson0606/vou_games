@@ -15,6 +15,8 @@ import 'package:vou_games/features/authentication/domain/usescases/log_out_useca
 import 'package:vou_games/features/authentication/domain/usescases/sign_in_usecase.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:vou_games/features/campaign/presentation/pages/campaign_homepage.dart';
+import 'package:vou_games/features/notification/presentation/pages/notification_homepage.dart';
+import 'package:vou_games/features/user/presentation/pages/user_homepage.dart';
 import 'package:vou_games/features/voucher/presentation/pages/voucher_homepage.dart';
 
 final sl = GetIt.instance;
@@ -54,17 +56,21 @@ Future<void> init() async {
 }
 
 void setupNavigationService() {
+
   NavigationService navigationService = sl<NavigationService>();
   final List<Destination> allDestinations = <Destination>[
-    Destination(0, 'Teal', Icons.home, Colors.teal),
-    Destination(1, 'Cyan', Icons.business, Colors.cyan),
-    Destination(2, 'Orange', Icons.school, Colors.orange),
-    Destination(3, 'Blue', Icons.flight, Colors.blue),
+    const Destination(0, 'Home', Icons.home, Colors.teal),
+    const Destination(1, 'Campaign', Icons.event, Colors.cyan),
+    const Destination(2, 'Voucher', Icons.discount_outlined, Colors.orange),
+    const Destination(3, 'Notification', Icons.notifications, Colors.blue),
+    const Destination(4, 'User', Icons.person, Colors.green),
   ];
   navigationService.registerFeature(allDestinations[0], const CampaignHomePage());
-  navigationService.registerFeature(allDestinations[1], const VoucherHomepage());
-  navigationService.registerFeature(allDestinations[2], const CampaignHomePage());
-  navigationService.registerFeature(allDestinations[3], const VoucherHomepage());
+  navigationService.registerFeature(allDestinations[1], const CampaignHomePage());
+  navigationService.registerFeature(allDestinations[2], const VoucherHomepage());
+  navigationService.registerFeature(allDestinations[3], const NotificationHomepage());
+  navigationService.registerFeature(allDestinations[4], const UserHomepage());
+
   navigationService.showNavigationBar();
   navigationService.setUp();
 }

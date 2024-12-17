@@ -53,15 +53,12 @@ class _HomePageState extends State<HomePage> {
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   return TextButton(
-                    // onPressed: state is AuthLoadingLoggedOutState
-                    //     ? null
-                    //     : () {
-                    //         BlocProvider.of<AuthBloc>(context)
-                    //             .add(AuthLoggedOutEvent());
-                    //       },
-                    onPressed: () {
-                      di.setupNavigationService();
-                    },
+                    onPressed: state is AuthLoadingLoggedOutState
+                        ? null
+                        : () {
+                            BlocProvider.of<AuthBloc>(context)
+                                .add(AuthLoggedOutEvent());
+                          },
                     child: const Text('Log out',
                         style: TextStyle(color: Colors.red)),
                   );

@@ -37,8 +37,12 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return shouldShowNavigationBar && allDestinations.length >= 2
         ? BottomNavigationBar(
+      selectedItemColor: colorScheme.primary,
       currentIndex: selectedIndex,
       onTap: (int index) {
         setState(() {

@@ -4,8 +4,8 @@ import 'package:vou_games/configs/themes/main_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:vou_games/features/authentication/presentation/pages/home/landing_page.dart';
-import 'package:vou_games/features/splash/presentation/bloc/splash_cubit.dart';
-import 'package:vou_games/features/splash/presentation/pages/splash_screen.dart';
+import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
+import 'package:vou_games/features/authentication/presentation/pages/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:vou_games/injection_container.dart' as di;
 
