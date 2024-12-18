@@ -6,6 +6,7 @@ import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.da
 import 'package:vou_games/features/authentication/presentation/pages/home/landing_page.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
 import 'package:vou_games/features/authentication/presentation/pages/splash_screen.dart';
+import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
 import 'firebase_options.dart';
 import 'package:vou_games/injection_container.dart' as di;
 
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => di.sl<AuthBloc>()..add(CheckLoggingInEvent()),
         ),
+        BlocProvider(create: (context) => di.sl<CampaignBloc>()),
       ],
       child: MaterialApp(
         title: 'VouGames',

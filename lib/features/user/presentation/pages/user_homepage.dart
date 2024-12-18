@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../authentication/presentation/bloc/auth_bloc.dart';
 
 class UserHomepage extends StatelessWidget {
   const UserHomepage({super.key});
@@ -9,12 +12,26 @@ class UserHomepage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('User Homepage'),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'Welcome to the User Homepage',
+            ),
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                return ElevatedButton(
+                  onPressed: state is AuthLoadingLoggedOutState
+                      ? null
+                      : () {
+                    BlocProvider.of<AuthBloc>(context)
+                        .add(AuthLoggedOutEvent());
+                  },
+                  child: const Text('Log out',
+                      style: TextStyle(color: Colors.red)),
+                );
+              },
             ),
           ],
         ),

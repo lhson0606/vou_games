@@ -14,8 +14,16 @@ import 'package:vou_games/features/authentication/domain/usescases/check_logged_
 import 'package:vou_games/features/authentication/domain/usescases/log_out_usecase.dart';
 import 'package:vou_games/features/authentication/domain/usescases/sign_in_usecase.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:vou_games/features/campaign/data/datasources/campaign_data_source_contract.dart';
+import 'package:vou_games/features/campaign/data/datasources/campaign_local_data_source.dart';
+import 'package:vou_games/features/campaign/data/repositories/campaign_repository_impl.dart';
+import 'package:vou_games/features/campaign/domain/repositories/campaign_repository.dart';
+import 'package:vou_games/features/campaign/domain/usecases/get_up_coming_campaign_usecase.dart';
+import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
 import 'package:vou_games/features/campaign/presentation/pages/campaign_homepage.dart';
+import 'package:vou_games/features/homepage/presentation/pages/first_homepage.dart';
 import 'package:vou_games/features/notification/presentation/pages/notification_homepage.dart';
+import 'package:vou_games/features/shop/presentation/pages/shop_homepage.dart';
 import 'package:vou_games/features/user/presentation/pages/user_homepage.dart';
 import 'package:vou_games/features/voucher/presentation/pages/voucher_homepage.dart';
 
@@ -30,10 +38,16 @@ Future<void> init() async {
         logOutUseCase: sl<LogOutUseCase>(),
         checkLoggedInUseCase: sl<CheckLoggedInUseCase>(),
       ));
+  sl.registerFactory(() => CampaignBloc(getUpComingCampaignUseCase: sl()));
   //============= Usecases =============
+  //----------------- Authentication -----------------
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthenticationRepository>()));
   sl.registerLazySingleton(() => LogOutUseCase(sl<AuthenticationRepository>()));
-  sl.registerLazySingleton(() => CheckLoggedInUseCase(sl<AuthenticationRepository>()));
+  sl.registerLazySingleton(
+      () => CheckLoggedInUseCase(sl<AuthenticationRepository>()));
+  //----------------- Campaign -----------------
+  sl.registerLazySingleton(
+      () => GetUpComingCampaignUseCase(sl<CampaignRepository>()));
 
   //============= Repository =============
   sl.registerLazySingleton<AuthenticationRepository>(() => AuthRepositoryImpl(
@@ -42,8 +56,15 @@ Future<void> init() async {
         sharedPreferencesService: sl(),
         userCredentialService: sl(),
       ));
+  sl.registerLazySingleton<CampaignRepository>(() => CampaignRepositoryImpl(
+        campaignDataSource: sl(),
+        networkInfo: sl(),
+        sharedPreferencesService: sl(),
+        userCredentialService: sl(),
+      ));
   //============= Datasources =============
   sl.registerLazySingleton<AuthDataSource>(() => AuthFirebaseDataSource());
+  sl.registerLazySingleton<CampaignDatasource>(() => CampaignLocalDataSource());
 
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
@@ -56,19 +77,21 @@ Future<void> init() async {
 }
 
 void setupNavigationService() {
-
   NavigationService navigationService = sl<NavigationService>();
   final List<Destination> allDestinations = <Destination>[
-    const Destination(0, 'Home', Icons.home, Colors.teal),
-    const Destination(1, 'Campaign', Icons.event, Colors.cyan),
-    const Destination(2, 'Voucher', Icons.discount_outlined, Colors.orange),
+    const Destination(0, 'Campaign', Icons.event, Colors.cyan),
+    const Destination(1, 'Voucher', Icons.discount_outlined, Colors.orange),
+    const Destination(2, 'Shop', Icons.location_pin, Colors.orange),
     const Destination(3, 'Notification', Icons.notifications, Colors.blue),
     const Destination(4, 'User', Icons.person, Colors.green),
   ];
-  navigationService.registerFeature(allDestinations[0], const CampaignHomePage());
-  navigationService.registerFeature(allDestinations[1], const CampaignHomePage());
-  navigationService.registerFeature(allDestinations[2], const VoucherHomepage());
-  navigationService.registerFeature(allDestinations[3], const NotificationHomepage());
+  navigationService.registerFeature(
+      allDestinations[0], const CampaignHomePage());
+  navigationService.registerFeature(
+      allDestinations[1], const VoucherHomepage());
+  navigationService.registerFeature(allDestinations[2], const ShopHomepage());
+  navigationService.registerFeature(
+      allDestinations[3], const NotificationHomepage());
   navigationService.registerFeature(allDestinations[4], const UserHomepage());
 
   navigationService.showNavigationBar();

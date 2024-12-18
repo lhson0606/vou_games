@@ -46,26 +46,6 @@ class _HomePageState extends State<HomePage> {
           }
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            title: const Text('Home page'),
-            actions: [
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, state) {
-                  return TextButton(
-                    onPressed: state is AuthLoadingLoggedOutState
-                        ? null
-                        : () {
-                            BlocProvider.of<AuthBloc>(context)
-                                .add(AuthLoggedOutEvent());
-                          },
-                    child: const Text('Log out',
-                        style: TextStyle(color: Colors.red)),
-                  );
-                },
-              ),
-            ],
-          ),
           body: Center(
             child: ValueListenableBuilder<Widget>(
               valueListenable: di.sl<NavigationService>().currentScreen,

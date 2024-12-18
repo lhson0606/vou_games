@@ -21,6 +21,8 @@ class MainTheme {
         secondary: primaryColor02,
         onPrimary: textContrast01,
         inversePrimary: primaryColor05,
+        onSecondary: primaryColor03,
+        tertiary: primaryColor04,
       ),
       textTheme: const TextTheme(
         bodyLarge: TextStyle(color: textContrast01),

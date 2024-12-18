@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vou_games/core/services/navigation_service.dart';
+import 'package:vou_games/injection_container.dart' as di;
 
 class VoucherHomepage extends StatelessWidget {
   const VoucherHomepage({super.key});
@@ -9,8 +11,20 @@ class VoucherHomepage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Voucher Homepage'),
       ),
-      body: const Center(
-        child: Text('Voucher Homepage'),
+      body: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Voucher Homepage'),
+            TextButton(
+              onPressed: () {
+                di.setupNavigationService();
+                di.sl<NavigationService>().hideNavigationBar();
+              },
+              child: const Text('testing'),
+            ),
+          ],
+        ),
       ),
     );
   }
