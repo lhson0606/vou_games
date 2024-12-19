@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vou_games/core/widgets/display/snack_bar.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
+import 'package:vou_games/features/campaign/presentation/widgets/campaign_card.dart';
 
 import '../../../../configs/svg/app_vectors.dart';
 
@@ -55,13 +56,15 @@ class CampaignHomePageState extends State<CampaignHomePage> {
                       itemCount: state.campaignList.length,
                       itemBuilder: (context, index) {
                         final campaign = state.campaignList[index];
-                        return ListTile(
-                          title: Text(campaign.name),
-                          subtitle: Text(campaign.description),
-                        );
+                        return CampaignCard(campaign: campaign);
                       },
                     );
-                  } else {
+                  } else if (state is UpcomingCampaignErrorState) {
+                    return Center(
+                      child: Text(state.error),
+                    );
+                  }
+                    else {
                     return const SizedBox();
                   }
                 },

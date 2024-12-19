@@ -52,7 +52,7 @@ class CampaignCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 IconButton(
-                  icon: const Icon(Icons.thumb_up),
+                  icon: const Icon(Icons.favorite),
                   onPressed: () {
                     // Handle like button press
                   },
