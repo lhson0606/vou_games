@@ -9,7 +9,8 @@ final class UserInitialState extends UserState {
 
 final class RequestNavigateToUserHomepageState extends UserState {
   final Widget homepage = const UserHomepage();
+  final DateTime timestamp = DateTime.now();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [timestamp];
 }

@@ -32,9 +32,10 @@ final class UpcomingCampaignLoadedState extends CampaignState {
 
 final class RequestNavigateToCampaignHomepageState extends CampaignState {
   final Widget homepage = const CampaignHomePage();
+  final DateTime timestamp = DateTime.now();
 
   @override
-  List<Object> get props => [homepage];
+  List<Object> get props => [timestamp];
 }
 
 final class NavigateToCampaignHomepageState extends CampaignState {}

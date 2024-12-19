@@ -9,7 +9,8 @@ final class NotificationInitial extends NotificationState {
 
 final class RequestNavigateToNotificationHomepageState extends NotificationState {
   final Widget homepage = const NotificationHomepage();
+  final DateTime timestamp = DateTime.now();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [timestamp];
 }

@@ -9,7 +9,8 @@ final class ShopInitialState extends ShopState {
 
 final class RequestNavigateToShopHomepageState extends ShopState {
   final Widget homepage = const ShopHomepage();
+  final DateTime timestamp = DateTime.now();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [timestamp];
 }

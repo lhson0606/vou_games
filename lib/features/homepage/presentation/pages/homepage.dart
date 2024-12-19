@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   Widget currentScreen = const Text('Loading...');
 
   void _onBottomBarIndexChanged(int index) {
+    print(index.toString());
     switch (index) {
       case CAMPAIGN_HOMEPAGE_INDEX:
         context

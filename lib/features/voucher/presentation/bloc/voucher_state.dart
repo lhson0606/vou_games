@@ -12,9 +12,10 @@ final class VoucherInitialState extends VoucherState {
 
 final class RequestNavigateToVoucherHomepageState extends VoucherState {
   final Widget homepage = const VoucherHomepage();
+  final DateTime timestamp = DateTime.now();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [timestamp];
 }
 
 
