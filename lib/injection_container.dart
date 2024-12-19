@@ -21,10 +21,15 @@ import 'package:vou_games/features/campaign/domain/repositories/campaign_reposit
 import 'package:vou_games/features/campaign/domain/usecases/get_up_coming_campaign_usecase.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
 import 'package:vou_games/features/campaign/presentation/pages/campaign_homepage.dart';
+import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/pages/first_homepage.dart';
+import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:vou_games/features/notification/presentation/pages/notification_homepage.dart';
+import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
 import 'package:vou_games/features/shop/presentation/pages/shop_homepage.dart';
+import 'package:vou_games/features/user/presentation/bloc/user_bloc.dart';
 import 'package:vou_games/features/user/presentation/pages/user_homepage.dart';
+import 'package:vou_games/features/voucher/presentation/bloc/voucher_bloc.dart';
 import 'package:vou_games/features/voucher/presentation/pages/voucher_homepage.dart';
 
 final sl = GetIt.instance;
@@ -39,6 +44,11 @@ Future<void> init() async {
         checkLoggedInUseCase: sl<CheckLoggedInUseCase>(),
       ));
   sl.registerFactory(() => CampaignBloc(getUpComingCampaignUseCase: sl()));
+  sl.registerFactory(() => VoucherBloc());
+  sl.registerFactory(() => ShopBloc());
+  sl.registerFactory(() => NotificationBloc());
+  sl.registerFactory(() => UserBloc());
+  sl.registerFactory(() => HomepageNavigatorBloc());
   //============= Usecases =============
   //----------------- Authentication -----------------
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthenticationRepository>()));
@@ -69,31 +79,31 @@ Future<void> init() async {
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => UserCredentialService());
-  sl.registerLazySingleton(() => NavigationService());
+  //sl.registerLazySingleton(() => NavigationService());
 
   //============= External =================
   sl.registerLazySingleton(() => InternetConnection());
   sl.registerLazySingleton(() => SharedPreferencesService());
 }
 
-void setupNavigationService() {
-  NavigationService navigationService = sl<NavigationService>();
-  final List<Destination> allDestinations = <Destination>[
-    const Destination(0, 'Campaign', Icons.event, Colors.cyan),
-    const Destination(1, 'Voucher', Icons.discount_outlined, Colors.orange),
-    const Destination(2, 'Shop', Icons.location_pin, Colors.orange),
-    const Destination(3, 'Notification', Icons.notifications, Colors.blue),
-    const Destination(4, 'User', Icons.person, Colors.green),
-  ];
-  navigationService.registerFeature(
-      allDestinations[0], const CampaignHomePage());
-  navigationService.registerFeature(
-      allDestinations[1], const VoucherHomepage());
-  navigationService.registerFeature(allDestinations[2], const ShopHomepage());
-  navigationService.registerFeature(
-      allDestinations[3], const NotificationHomepage());
-  navigationService.registerFeature(allDestinations[4], const UserHomepage());
-
-  navigationService.showNavigationBar();
-  navigationService.setUp();
-}
+// void setupNavigationService() {
+//   NavigationService navigationService = sl<NavigationService>();
+//   final List<Destination> allDestinations = <Destination>[
+//     const Destination(0, 'Campaign', Icons.event, Colors.cyan),
+//     const Destination(1, 'Voucher', Icons.discount_outlined, Colors.orange),
+//     const Destination(2, 'Shop', Icons.location_pin, Colors.orange),
+//     const Destination(3, 'Notification', Icons.notifications, Colors.blue),
+//     const Destination(4, 'User', Icons.person, Colors.green),
+//   ];
+//   navigationService.registerFeature(
+//       allDestinations[0], const CampaignHomePage());
+//   navigationService.registerFeature(
+//       allDestinations[1], const VoucherHomepage());
+//   navigationService.registerFeature(allDestinations[2], const ShopHomepage());
+//   navigationService.registerFeature(
+//       allDestinations[3], const NotificationHomepage());
+//   navigationService.registerFeature(allDestinations[4], const UserHomepage());
+//
+//   navigationService.showNavigationBar();
+//   navigationService.setUp();
+// }

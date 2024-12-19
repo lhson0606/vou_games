@@ -29,3 +29,12 @@ final class UpcomingCampaignLoadedState extends CampaignState {
   @override
   List<Object> get props => [campaignList];
 }
+
+final class RequestNavigateToCampaignHomepageState extends CampaignState {
+  final Widget homepage = const CampaignHomePage();
+
+  @override
+  List<Object> get props => [homepage];
+}
+
+final class NavigateToCampaignHomepageState extends CampaignState {}

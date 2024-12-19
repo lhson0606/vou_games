@@ -7,4 +7,8 @@ abstract class CampaignEvent extends Equatable{
   List<Object> get props => [];
 }
 
+class RequestNavigateToCampaignHomepageEvent extends CampaignEvent{}
+
+class NavigateToCampaignHomepageEvent extends CampaignEvent{}
+
 class GetUpComingCampaignEvent extends CampaignEvent{}

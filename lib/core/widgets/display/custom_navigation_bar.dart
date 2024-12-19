@@ -1,18 +1,20 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class Destination {
+class Destination extends Equatable{
   const Destination(this.index, this.title, this.icon, this.color);
 
   final int index;
   final String title;
   final IconData icon;
   final MaterialColor color;
+
+  @override
+  List<Object?> get props => [index];
 }
 
 class CustomBottomNavigationBar extends StatefulWidget {
   CustomBottomNavigationBar({super.key});
-
-  final List<ValueChanged<int>> onIndexChanged = <ValueChanged<int>>[];
 
   @override
   State<CustomBottomNavigationBar> createState() => CustomBottomNavigationBarState();
@@ -20,27 +22,15 @@ class CustomBottomNavigationBar extends StatefulWidget {
 
 class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   int selectedIndex = 0;
-  bool shouldShowNavigationBar = false;
   final List<Destination> allDestinations = <Destination>[];
-
-  void showNavigationBar() {
-    setState(() {
-      shouldShowNavigationBar = true;
-    });
-  }
-
-  void hideNavigationBar() {
-    setState(() {
-      shouldShowNavigationBar = false;
-    });
-  }
+  final List<ValueChanged<int>> onIndexChanged = <ValueChanged<int>>[];
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return shouldShowNavigationBar && allDestinations.length >= 2
+    return allDestinations.length >= 2
         ? BottomNavigationBar(
       selectedItemColor: colorScheme.primary,
       currentIndex: selectedIndex,
@@ -49,7 +39,7 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           selectedIndex = index;
         });
         // notify listeners
-        for (final ValueChanged<int> callback in widget.onIndexChanged) {
+        for (final ValueChanged<int> callback in onIndexChanged) {
           callback(index);
         }
       },

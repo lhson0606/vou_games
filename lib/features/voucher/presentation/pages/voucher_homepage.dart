@@ -18,8 +18,8 @@ class VoucherHomepage extends StatelessWidget {
             const Text('Voucher Homepage'),
             TextButton(
               onPressed: () {
-                di.setupNavigationService();
-                di.sl<NavigationService>().hideNavigationBar();
+                // di.setupNavigationService();
+                // di.sl<NavigationService>().hideNavigationBar();
               },
               child: const Text('testing'),
             ),
