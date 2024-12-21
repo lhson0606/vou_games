@@ -5,7 +5,6 @@ import 'package:vou_games/configs/svg/app_vectors.dart';
 import 'package:vou_games/features/authentication/presentation/pages/home/landing_page.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/splash_state.dart';
-import 'package:vou_games/injection_container.dart' as di;
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});

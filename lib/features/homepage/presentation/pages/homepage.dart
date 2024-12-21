@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vou_games/configs/navigation/destination_indices.dart';
-import 'package:vou_games/core/services/navigation_service.dart';
 import 'package:vou_games/core/widgets/display/custom_navigation_bar.dart';
-import 'package:vou_games/core/widgets/display/loading_widget.dart';
 import 'package:vou_games/core/widgets/display/snack_bar.dart';
 import 'package:vou_games/features/authentication/presentation/pages/auth/sign_in_page.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
-import 'package:vou_games/features/campaign/presentation/pages/campaign_homepage.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
 import 'package:vou_games/features/user/presentation/bloc/user_bloc.dart';
 import 'package:vou_games/features/voucher/presentation/bloc/voucher_state.dart';
-import 'package:vou_games/injection_container.dart' as di;
 
 import '../../../authentication/presentation/bloc/auth_bloc.dart';
 import '../../../voucher/presentation/bloc/voucher_bloc.dart';

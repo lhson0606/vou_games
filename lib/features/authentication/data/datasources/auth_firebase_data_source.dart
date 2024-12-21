@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vou_games/features/authentication/data/datasources/auth_remote_data_source_contract.dart';
 import 'package:vou_games/features/authentication/data/models/sign_in_model.dart';
 import 'package:vou_games/features/authentication/data/models/sign_up_model.dart';
@@ -57,6 +58,9 @@ class AuthFirebaseDataSource extends AuthDataSource {
     try {
       return firebaseAuth.signOut().then((value) => Future.value(unit));
     } on FirebaseAuthException catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
       throw ServerException();
     }
   }

@@ -10,6 +10,10 @@ class CampaignModel extends CampaignEntity {
     required super.endDate,
     required super.status,
     super.location,
+    required super.gameTypes,
+    required super.liked,
+    required super.likesCount,
+    required super.participantsCount,
   });
 
   factory CampaignModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +26,10 @@ class CampaignModel extends CampaignEntity {
       endDate: json['endDate'],
       status: json['status'],
       location: json['location'],
+      gameTypes: List<String>.from(json['gameTypes']),
+      liked: json['liked'],
+      likesCount: json['likesCount'],
+      participantsCount: json['participantsCount'],
     );
   }
 
@@ -35,6 +43,10 @@ class CampaignModel extends CampaignEntity {
       'endDate': endDate,
       'status': status,
       'location': location,
+      'gameTypes': gameTypes,
+      'liked': liked,
+      'likesCount': likesCount,
+      'participantsCount': participantsCount,
     };
   }
 }

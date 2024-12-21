@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:vou_games/core/services/navigation_service.dart';
 import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/shared_preferences_service.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
-import 'package:vou_games/core/widgets/display/custom_navigation_bar.dart';
 import 'package:vou_games/features/authentication/data/datasources/auth_firebase_data_source.dart';
 import 'package:vou_games/features/authentication/data/datasources/auth_remote_data_source_contract.dart';
 import 'package:vou_games/features/authentication/data/repositories/auth_repository_impl.dart';
@@ -20,17 +17,11 @@ import 'package:vou_games/features/campaign/data/repositories/campaign_repositor
 import 'package:vou_games/features/campaign/domain/repositories/campaign_repository.dart';
 import 'package:vou_games/features/campaign/domain/usecases/get_up_coming_campaign_usecase.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
-import 'package:vou_games/features/campaign/presentation/pages/campaign_homepage.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
-import 'package:vou_games/features/homepage/presentation/pages/first_homepage.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
-import 'package:vou_games/features/notification/presentation/pages/notification_homepage.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
-import 'package:vou_games/features/shop/presentation/pages/shop_homepage.dart';
 import 'package:vou_games/features/user/presentation/bloc/user_bloc.dart';
-import 'package:vou_games/features/user/presentation/pages/user_homepage.dart';
 import 'package:vou_games/features/voucher/presentation/bloc/voucher_bloc.dart';
-import 'package:vou_games/features/voucher/presentation/pages/voucher_homepage.dart';
 
 final sl = GetIt.instance;
 

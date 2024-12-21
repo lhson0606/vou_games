@@ -7,7 +7,7 @@ import 'package:vou_games/features/campaign/data/models/campaign_model.dart';
 class CampaignLocalDataSource extends CampaignDatasource {
   @override
   Future<List<CampaignModel>> getUpComingCampaigns() {
-    final List<dynamic> jsonList = json.decode(MOCK_CAPAIGNS_JSON);
+    final List<dynamic> jsonList = json.decode(MOCK_CAMPAIGNS_JSON);
     return Future.value(jsonList.map((e) => CampaignModel.fromJson(e)).toList());
   }
 }

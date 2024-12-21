@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class CampaignEntity extends Equatable{
+class CampaignEntity extends Equatable {
   final int id;
   final String name;
   final String description;
@@ -9,6 +9,10 @@ class CampaignEntity extends Equatable{
   final String endDate;
   final String status;
   final String location;
+  final List<String> gameTypes;
+  final bool liked;
+  final int likesCount;
+  final int participantsCount;
 
   const CampaignEntity({
     required this.id,
@@ -19,6 +23,10 @@ class CampaignEntity extends Equatable{
     required this.endDate,
     required this.status,
     this.location = "",
+    required this.gameTypes,
+    required this.liked,
+    required this.likesCount,
+    required this.participantsCount,
   });
 
   @override
