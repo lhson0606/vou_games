@@ -39,6 +39,17 @@ class AddDestinationEvent extends HomepageNavigatorEvent {
 }
 
 class LoadFirstScreenEvent extends HomepageNavigatorEvent {
+  final DateTime timeStamp = DateTime.now();
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [timeStamp];
+}
+
+class NavigationEvent extends HomepageNavigatorEvent {
+  final Widget page;
+
+  NavigationEvent(this.page);
+
+  @override
+  List<Object?> get props => [page];
 }

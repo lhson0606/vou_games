@@ -19,6 +19,7 @@ import 'package:vou_games/features/campaign/domain/usecases/get_up_coming_campai
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
 import 'package:vou_games/features/user/presentation/bloc/user_bloc.dart';
 import 'package:vou_games/features/voucher/presentation/bloc/voucher_bloc.dart';
@@ -40,6 +41,7 @@ Future<void> init() async {
   sl.registerFactory(() => NotificationBloc());
   sl.registerFactory(() => UserBloc());
   sl.registerFactory(() => HomepageNavigatorBloc());
+  sl.registerFactory(() => QuizBloc());
   //============= Usecases =============
   //----------------- Authentication -----------------
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthenticationRepository>()));

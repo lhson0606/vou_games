@@ -13,8 +13,6 @@ class LoadingWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Center(
           child: SizedBox(
-            height: 30,
-            width: 30,
             child: CircularProgressIndicator(
               color: theme.colorScheme.primary,
             ),

@@ -9,6 +9,7 @@ import 'package:vou_games/features/authentication/presentation/pages/splash_scre
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
 import 'package:vou_games/features/user/presentation/bloc/user_bloc.dart';
 import 'package:vou_games/features/voucher/presentation/bloc/voucher_bloc.dart';
@@ -30,19 +31,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Destination> allDestinations = <Destination>[
-      const Destination(
-          CAMPAIGN_HOMEPAGE_INDEX, 'Campaign', Icons.event, Colors.cyan),
-      const Destination(VOUCHER_HOMEPAGE_INDEX, 'Voucher',
-          Icons.discount_outlined, Colors.orange),
-      const Destination(
-          SHOP_HOMEPAGE_INDEX, 'Shop', Icons.location_pin, Colors.orange),
-      const Destination(NOTIFICATION_HOMEPAGE_INDEX, 'Notification',
-          Icons.notifications, Colors.blue),
-      const Destination(
-          USER_HOMEPAGE_INDEX, 'User', Icons.person, Colors.green),
-    ];
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -56,16 +44,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => di.sl<ShopBloc>()),
         BlocProvider(create: (context) => di.sl<NotificationBloc>()),
         BlocProvider(create: (context) => di.sl<UserBloc>()),
-        BlocProvider(create: (context) {
-          final bloc = di.sl<HomepageNavigatorBloc>();
-          // for each destination in allDestinations
-          for (var destination in allDestinations) {
-            // add the destination to the bloc
-            bloc.add(AddDestinationEvent(destination));
-          }
-          bloc.add(LoadFirstScreenEvent());
-          return bloc;
-        }),
+        BlocProvider(create: (context) => di.sl<HomepageNavigatorBloc>()),
+        BlocProvider(create: (context) => di.sl<QuizBloc>()),
       ],
       child: MaterialApp(
         title: 'VouGames',

@@ -22,6 +22,8 @@ class HomepageNavigatorBloc
         emit(HomepageNavigatorChangeCurrentScreenState(event.screen));
       } else if(event is LoadFirstScreenEvent){
         emit(LoadFirstScreenState());
+      } else if(event is NavigationEvent){
+        emit(PageChangedState(event.page));
       }
     });
   }

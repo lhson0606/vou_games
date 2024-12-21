@@ -49,3 +49,13 @@ final class LoadFirstScreenState extends HomepageNavigatorState {
   @override
   List<Object?> get props => [];
 }
+
+class PageChangedState extends HomepageNavigatorState {
+  final Widget page;
+  final DateTime timeStamp = DateTime.now();
+
+  PageChangedState(this.page);
+
+  @override
+  List<Object?> get props => [page, timeStamp];
+}

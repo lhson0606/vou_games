@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vou_games/configs/lottie/app_lottie.dart';
+import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
+import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 
 class CampaignCard extends StatelessWidget {
   final CampaignEntity campaign;
@@ -91,7 +94,9 @@ class CampaignCard extends StatelessWidget {
                           leading: Lottie.asset(AppLottie.getPath(gameType), width: 40.0),
                           title: Center(child: Text(gameType)),
                           onTap: () {
-                            // Handle game type selection
+                            if(gameType == 'quiz') {
+                              context.read<QuizBloc>().add(PlayQuizEvent(campaignId: campaign.id, gameType: gameType));
+                            }
                             Navigator.pop(context);
                           },
                         ),
