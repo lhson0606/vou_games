@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:vou_games/configs/lottie/app_lottie.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
+import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 
 class CampaignCard extends StatelessWidget {
@@ -95,9 +96,10 @@ class CampaignCard extends StatelessWidget {
                           title: Center(child: Text(gameType)),
                           onTap: () {
                             if(gameType == 'quiz') {
-                              context.read<QuizBloc>().add(PlayQuizEvent(campaignId: campaign.id, gameType: gameType));
+                              context.read<QuizBloc>().add(PlayQuizEvent(campaignId: campaign.id));
+                            } else {
+                              context.read<DiceBloc>().add(PlayDiceEvent(campaignId: campaign.id));
                             }
-                            Navigator.pop(context);
                           },
                         ),
                       );

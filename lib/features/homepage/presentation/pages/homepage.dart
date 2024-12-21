@@ -7,6 +7,7 @@ import 'package:vou_games/core/widgets/display/loading_widget.dart';
 import 'package:vou_games/core/widgets/display/snack_bar.dart';
 import 'package:vou_games/features/authentication/presentation/pages/auth/sign_in_page.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
+import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
@@ -37,8 +38,7 @@ class _HomePageState extends State<HomePage> {
         SHOP_HOMEPAGE_INDEX, 'Shop', Icons.location_pin, Colors.orange),
     const Destination(NOTIFICATION_HOMEPAGE_INDEX, 'Notification',
         Icons.notifications, Colors.blue),
-    const Destination(
-        USER_HOMEPAGE_INDEX, 'User', Icons.person, Colors.green),
+    const Destination(USER_HOMEPAGE_INDEX, 'User', Icons.person, Colors.green),
   ];
 
   Widget currentScreen = const LoadingWidget();
@@ -122,8 +122,7 @@ class _HomePageState extends State<HomePage> {
                     .add(ChangeHomepageCurrentScreenEvent(state.homepage));
               }
             }),
-            BlocListener<VoucherBloc, VoucherState>(
-                listener: (context, state) {
+            BlocListener<VoucherBloc, VoucherState>(listener: (context, state) {
               if (state is RequestNavigateToVoucherHomepageState) {
                 context
                     .read<HomepageNavigatorBloc>()
@@ -152,37 +151,49 @@ class _HomePageState extends State<HomePage> {
                     .add(ChangeHomepageCurrentScreenEvent(state.homepage));
               }
             }),
-            BlocListener<QuizBloc, QuizState> (listener: (context, state) {
-              if(state is RequestNavigateToQuizState) {
-                context.read<HomepageNavigatorBloc>().add(NavigationEvent(state.quizPage));
-              }
-            },),
+            BlocListener<QuizBloc, QuizState>(
+              listener: (context, state) {
+                if (state is RequestNavigateToQuizState) {
+                  context
+                      .read<HomepageNavigatorBloc>()
+                      .add(NavigationEvent(state.quizPage));
+                }
+              },
+            ),
+            BlocListener<DiceBloc, DiceState>(
+              listener: (context, state) {
+                if (state is RequestNavigateToDiceState) {
+                  context
+                      .read<HomepageNavigatorBloc>()
+                      .add(NavigationEvent(state.dicePage));
+                }
+              },
+            ),
             BlocListener<HomepageNavigatorBloc, HomepageNavigatorState>(
                 listener: (context, state) {
-                  // if (state is HomepageNavigatorInitialState) {
-                  //   context
-                  //       .read<CampaignBloc>()
-                  //       .add(RequestNavigateToCampaignHomepageEvent());
-                  // } else
-                  if (state is AddDestinationState) {
-                    bottomNavigationBarKey.currentState!
-                        .addDestination(state.destination);
-                  } else if (state is HomepageNavigatorChangeCurrentScreenState) {
-                    setState(() {
-                      currentScreen = state.screen;
-                    });
-                  } else if (state is LoadFirstScreenState) {
-                    context
-                        .read<CampaignBloc>()
-                        .add(RequestNavigateToCampaignHomepageEvent());
-                    bottomNavigationBarKey.currentState?.onIndexChanged
-                        .add(_onBottomBarIndexChanged);
-                  } else if (state is PageChangedState) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => state.page)
-                    );
-                  }
-                }),
+              // if (state is HomepageNavigatorInitialState) {
+              //   context
+              //       .read<CampaignBloc>()
+              //       .add(RequestNavigateToCampaignHomepageEvent());
+              // } else
+              if (state is AddDestinationState) {
+                bottomNavigationBarKey.currentState!
+                    .addDestination(state.destination);
+              } else if (state is HomepageNavigatorChangeCurrentScreenState) {
+                setState(() {
+                  currentScreen = state.screen;
+                });
+              } else if (state is LoadFirstScreenState) {
+                context
+                    .read<CampaignBloc>()
+                    .add(RequestNavigateToCampaignHomepageEvent());
+                bottomNavigationBarKey.currentState?.onIndexChanged
+                    .add(_onBottomBarIndexChanged);
+              } else if (state is PageChangedState) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => state.page));
+              }
+            }),
           ],
           child: Scaffold(
             body: Center(

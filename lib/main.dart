@@ -7,6 +7,7 @@ import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.da
 import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
 import 'package:vou_games/features/authentication/presentation/pages/splash_screen.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
+import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
@@ -46,6 +47,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => di.sl<UserBloc>()),
         BlocProvider(create: (context) => di.sl<HomepageNavigatorBloc>()),
         BlocProvider(create: (context) => di.sl<QuizBloc>()),
+        BlocProvider(create: (context) => di.sl<DiceBloc>()),
+        BlocProvider(create: (context) => di.sl<NotificationBloc>()),
       ],
       child: MaterialApp(
         title: 'VouGames',

@@ -17,6 +17,7 @@ import 'package:vou_games/features/campaign/data/repositories/campaign_repositor
 import 'package:vou_games/features/campaign/domain/repositories/campaign_repository.dart';
 import 'package:vou_games/features/campaign/domain/usecases/get_up_coming_campaign_usecase.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
+import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
@@ -42,6 +43,7 @@ Future<void> init() async {
   sl.registerFactory(() => UserBloc());
   sl.registerFactory(() => HomepageNavigatorBloc());
   sl.registerFactory(() => QuizBloc());
+  sl.registerFactory(() => DiceBloc());
   //============= Usecases =============
   //----------------- Authentication -----------------
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthenticationRepository>()));

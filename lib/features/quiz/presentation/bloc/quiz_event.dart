@@ -4,11 +4,10 @@ abstract class QuizEvent extends Equatable{}
 
 class PlayQuizEvent extends QuizEvent {
   final int campaignId;
-  final String gameType;
   final DateTime timeStamp = DateTime.now();
 
-  PlayQuizEvent({required this.campaignId, required this.gameType});
+  PlayQuizEvent({required this.campaignId});
 
   @override
-  List<Object?> get props => [campaignId, gameType, timeStamp];
+  List<Object?> get props => [campaignId, timeStamp];
 }
