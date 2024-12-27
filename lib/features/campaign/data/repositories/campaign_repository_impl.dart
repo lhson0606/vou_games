@@ -9,7 +9,7 @@ import '../../../../core/services/shared_preferences_service.dart';
 import '../../../../core/services/user_credential_service.dart';
 
 class CampaignRepositoryImpl implements CampaignRepository {
-  final CampaignDatasource campaignDataSource;
+  final CampaignDataSource campaignDataSource;
   final NetworkInfo networkInfo;
   final SharedPreferencesService sharedPreferencesService;
   final UserCredentialService userCredentialService;

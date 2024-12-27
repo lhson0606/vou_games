@@ -69,7 +69,7 @@ Future<void> init() async {
       ));
   //============= Datasources =============
   sl.registerLazySingleton<AuthDataSource>(() => AuthFirebaseDataSource());
-  sl.registerLazySingleton<CampaignDatasource>(() => CampaignLocalDataSource());
+  sl.registerLazySingleton<CampaignDataSource>(() => CampaignLocalDataSource());
 
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

@@ -1,5 +1,3 @@
-
-
 const String MOCK_CAMPAIGNS_JSON = """
 [
   {
