@@ -1,6 +1,6 @@
 const String USER_MOCK_JSON = '''
 {
-  "userId": "12345",
+  "userId": 1,
   "userName": "JohnDoe",
   "email": "johndoe@example.com",
   "phoneNumber": "+1234567890",

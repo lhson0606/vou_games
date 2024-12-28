@@ -23,7 +23,8 @@ class UserRepositoryImpl implements UserRepository {
       try {
         final userProfile = await userDataSource.getUserProfile();
         return Right(userProfile);
-      } on Exception {
+      } catch (e){
+        rethrow;
         return Left(UnknownFailure());
       }
     } else {

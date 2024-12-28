@@ -6,3 +6,8 @@ final class RequestNavigateToUserHomepageEvent extends UserEvent{
   @override
   List<Object?> get props => [];
 }
+
+final class FetchUserProfileEvent extends UserEvent{
+  @override
+  List<Object?> get props => [];
+}
