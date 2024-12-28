@@ -54,7 +54,7 @@ Future<void> init() async {
   sl.registerFactory(() => CampaignBloc(getUpComingCampaignUseCase: sl()));
   sl.registerFactory(() => VoucherBloc(getAllUserVoucherUsecase: sl()));
   sl.registerFactory(() => ShopBloc());
-  sl.registerFactory(() => NotificationBloc());
+  sl.registerFactory(() => NotificationBloc(getUserNotificationUseCase: sl()));
   sl.registerFactory(() => UserBloc());
   sl.registerFactory(() => HomepageNavigatorBloc());
   sl.registerFactory(() => QuizBloc());

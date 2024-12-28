@@ -23,7 +23,8 @@ class NotificationRepositoryImpl implements NotificationRepository {
       try {
         final notifications = await notificationDataSource.getUserNotification();
         return Right(notifications);
-      } on Exception {
+      } catch (e) {
+        rethrow;
         return Left(UnknownFailure());
       }
     } else {

@@ -14,3 +14,26 @@ final class RequestNavigateToNotificationHomepageState extends NotificationState
   @override
   List<Object?> get props => [timestamp];
 }
+
+final class FetchingNotificationState extends NotificationState {
+  @override
+  List<Object?> get props => [];
+}
+
+final class NotificationLoadedState extends NotificationState {
+  final List<NotificationEntity> notifications;
+
+  NotificationLoadedState(this.notifications);
+
+  @override
+  List<Object?> get props => [notifications];
+}
+
+final class NotificationErrorState extends NotificationState {
+  final String error;
+
+  NotificationErrorState(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}

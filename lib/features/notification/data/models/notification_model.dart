@@ -14,7 +14,7 @@ class NotificationModel extends NotificationEntity {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      date: json['date'],
+      date: DateTime.parse(json['date']),
       isRead: json['isRead'],
     );
   }
@@ -24,7 +24,7 @@ class NotificationModel extends NotificationEntity {
       'id': id,
       'title': title,
       'description': description,
-      'date': date,
+      'date': date.toIso8601String(),
       'isRead': isRead,
     };
   }
