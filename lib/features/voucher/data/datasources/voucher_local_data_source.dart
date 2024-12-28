@@ -10,5 +10,4 @@ class VoucherLocalDataSource extends VoucherDataSource {
     final List<dynamic> jsonList = json.decode(MOCK_VOUCHERS_JSON);
     return Future.value(jsonList.map((e) => VoucherModel.fromJson(e)).toList());
   }
-
 }

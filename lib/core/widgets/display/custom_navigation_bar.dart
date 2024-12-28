@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class Destination extends Equatable{
+class Destination extends Equatable {
   const Destination(this.index, this.title, this.icon, this.color);
 
   final int index;
@@ -17,7 +17,8 @@ class CustomBottomNavigationBar extends StatefulWidget {
   CustomBottomNavigationBar({super.key});
 
   @override
-  State<CustomBottomNavigationBar> createState() => CustomBottomNavigationBarState();
+  State<CustomBottomNavigationBar> createState() =>
+      CustomBottomNavigationBarState();
 }
 
 class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
@@ -32,26 +33,30 @@ class CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
     return allDestinations.length >= 2
         ? BottomNavigationBar(
-      selectedItemColor: colorScheme.primary,
-      currentIndex: selectedIndex,
-      onTap: (int index) {
-        setState(() {
-          selectedIndex = index;
-        });
-        // notify listeners
-        for (final ValueChanged<int> callback in onIndexChanged) {
-          callback(index);
-        }
-      },
-      items: allDestinations.map<BottomNavigationBarItem>(
-            (Destination destination) {
-          return BottomNavigationBarItem(
-            icon: Icon(destination.icon, color: destination.color),
-            label: destination.title,
-          );
-        },
-      ).toList(),
-    )
+            selectedItemColor: colorScheme.primary,
+            currentIndex: selectedIndex,
+            onTap: (int index) {
+              if (index == selectedIndex) {
+                return;
+              }
+
+              setState(() {
+                selectedIndex = index;
+              });
+              // notify listeners
+              for (final ValueChanged<int> callback in onIndexChanged) {
+                callback(index);
+              }
+            },
+            items: allDestinations.map<BottomNavigationBarItem>(
+              (Destination destination) {
+                return BottomNavigationBarItem(
+                  icon: Icon(destination.icon, color: destination.color),
+                  label: destination.title,
+                );
+              },
+            ).toList(),
+          )
         : const SizedBox.shrink();
   }
 

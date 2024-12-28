@@ -7,19 +7,21 @@ import 'package:vou_games/features/user/domain/entities/user_profile_entity.dart
 import 'package:vou_games/features/user/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
-  final UserDataSource _userDataSource;
-  final NetworkInfo _networkInfo;
-  final UserCredentialService _userCredentialService;
+  final UserDataSource userDataSource;
+  final NetworkInfo networkInfo;
+  final UserCredentialService userCredentialService;
 
   UserRepositoryImpl(
-      this._userDataSource, this._networkInfo, this._userCredentialService);
+      {required this.userDataSource,
+      required this.networkInfo,
+      required this.userCredentialService});
 
   @override
   Future<Either<Failure, UserProfileEntity>> getUserProfile() async {
-    if (await _networkInfo.isConnected
+    if (await networkInfo.isConnected
         .timeout(const Duration(seconds: 10), onTimeout: () => false)) {
       try {
-        final userProfile = await _userDataSource.getUserProfile();
+        final userProfile = await userDataSource.getUserProfile();
         return Right(userProfile);
       } on Exception {
         return Left(UnknownFailure());

@@ -41,7 +41,12 @@ class _HomePageState extends State<HomePage> {
     const Destination(USER_HOMEPAGE_INDEX, 'User', Icons.person, Colors.green),
   ];
 
-  Widget currentScreen = const LoadingWidget();
+  Widget currentScreen = Container(
+    decoration: const BoxDecoration(
+      color: Colors.white, // Set your desired background color
+    ),
+    child: const Center(child: LoadingWidget()),
+  );
 
   @override
   void initState() {

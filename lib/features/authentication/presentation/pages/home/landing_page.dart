@@ -31,7 +31,7 @@ class _LandingPageState extends State<LandingPage> {
                 MaterialPageRoute(builder: (context) => const HomePage()));
           }
         },
-        child: const LoadingWidget(),
+        child: const Center(child: LoadingWidget()),
       ),
     );
   }

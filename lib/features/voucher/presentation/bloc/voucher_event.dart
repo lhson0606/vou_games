@@ -7,4 +7,9 @@ class RequestNavigateToVoucherHomepageEvent extends VoucherEvent{
   List<Object?> get props => [];
 }
 
+class FetchUserVouchersEvent extends VoucherEvent{
+  @override
+  List<Object?> get props => [];
+}
+
 

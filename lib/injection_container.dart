@@ -19,10 +19,25 @@ import 'package:vou_games/features/campaign/domain/usecases/get_up_coming_campai
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
 import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
+import 'package:vou_games/features/notification/data/datasources/notification_datasource_contract.dart';
+import 'package:vou_games/features/notification/data/datasources/notification_local_data_source.dart';
+import 'package:vou_games/features/notification/data/repositories/notification_repository_impl.dart';
+import 'package:vou_games/features/notification/domain/repositories/notification_repository.dart';
+import 'package:vou_games/features/notification/domain/usecases/get_user_notification_usecase.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
+import 'package:vou_games/features/user/data/datasources/user_data_source_contract.dart';
+import 'package:vou_games/features/user/data/datasources/user_local_data_source.dart';
+import 'package:vou_games/features/user/data/repositories/user_repository_impl.dart';
+import 'package:vou_games/features/user/domain/repositories/user_repository.dart';
+import 'package:vou_games/features/user/domain/usecases/get_user_profile_usecase.dart';
 import 'package:vou_games/features/user/presentation/bloc/user_bloc.dart';
+import 'package:vou_games/features/voucher/data/datasources/voucher_data_source_contract.dart';
+import 'package:vou_games/features/voucher/data/datasources/voucher_local_data_source.dart';
+import 'package:vou_games/features/voucher/data/repositories/voucher_repository_impl.dart';
+import 'package:vou_games/features/voucher/domain/repositories/voucher_repository.dart';
+import 'package:vou_games/features/voucher/domain/usecases/get_all_user_voucher_usecase.dart';
 import 'package:vou_games/features/voucher/presentation/bloc/voucher_bloc.dart';
 
 final sl = GetIt.instance;
@@ -37,14 +52,14 @@ Future<void> init() async {
         checkLoggedInUseCase: sl<CheckLoggedInUseCase>(),
       ));
   sl.registerFactory(() => CampaignBloc(getUpComingCampaignUseCase: sl()));
-  sl.registerFactory(() => VoucherBloc());
+  sl.registerFactory(() => VoucherBloc(getAllUserVoucherUsecase: sl()));
   sl.registerFactory(() => ShopBloc());
   sl.registerFactory(() => NotificationBloc());
   sl.registerFactory(() => UserBloc());
   sl.registerFactory(() => HomepageNavigatorBloc());
   sl.registerFactory(() => QuizBloc());
   sl.registerFactory(() => DiceBloc());
-  //============= Usecases =============
+  //============= UseCases =============
   //----------------- Authentication -----------------
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthenticationRepository>()));
   sl.registerLazySingleton(() => LogOutUseCase(sl<AuthenticationRepository>()));
@@ -53,6 +68,13 @@ Future<void> init() async {
   //----------------- Campaign -----------------
   sl.registerLazySingleton(
       () => GetUpComingCampaignUseCase(sl<CampaignRepository>()));
+  //----------------- Voucher -----------------
+  sl.registerLazySingleton(() => GetAllUserVoucherUsecase(sl()));
+  //----------------- Shop -----------------
+  //----------------- Notification -----------------
+  sl.registerLazySingleton(() => GetUserNotificationUseCase(sl()));
+  //----------------- User -----------------
+  sl.registerLazySingleton(() => GetUserProfileUseCase(sl()));
 
   //============= Repository =============
   sl.registerLazySingleton<AuthenticationRepository>(() => AuthRepositoryImpl(
@@ -67,9 +89,24 @@ Future<void> init() async {
         sharedPreferencesService: sl(),
         userCredentialService: sl(),
       ));
+  sl.registerLazySingleton<VoucherRepository>(() => VoucherRepositoryImpl(
+        voucherDataSource: sl(),
+        networkInfo: sl(),
+        userCredentialService: sl(),
+      ));
+  sl.registerLazySingleton<NotificationRepository>(() =>
+      NotificationRepositoryImpl(
+          notificationDataSource: sl(),
+          networkInfo: sl(),
+          userCredentialService: sl()));
+  sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
+      userDataSource: sl(), networkInfo: sl(), userCredentialService: sl()));
   //============= Datasources =============
   sl.registerLazySingleton<AuthDataSource>(() => AuthFirebaseDataSource());
   sl.registerLazySingleton<CampaignDataSource>(() => CampaignLocalDataSource());
+  sl.registerLazySingleton<VoucherDataSource>(() => VoucherLocalDataSource());
+  sl.registerLazySingleton<NotificationDataSource>(() => NotificationLocalDataSource());
+  sl.registerLazySingleton<UserDataSource>(() => UserLocalDataSource());
 
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

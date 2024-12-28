@@ -7,17 +7,11 @@ class LoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.colorScheme.inversePrimary,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: SizedBox(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
-          ),
-        ),
+    return SizedBox(
+      height: 40,
+      width: 40,
+      child: CircularProgressIndicator(
+        color: theme.colorScheme.primary,
       ),
     );
   }
