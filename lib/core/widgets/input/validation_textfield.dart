@@ -34,6 +34,10 @@ class ValidationTextFieldState extends State<ValidationTextField> {
 
   get text => widget.controller.text;
 
+  setValue(String value) {
+    widget.controller.text = value;
+  }
+
   void validate() {
     setState(() {
       errorText = widget.validator!(widget.controller.text);

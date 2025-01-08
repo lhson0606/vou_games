@@ -15,3 +15,23 @@ String? passwordValidator(String? value) {
   }
   return null;
 }
+
+// username validator
+String? usernameValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter your username';
+  } else if (value.length < 5) {
+    return 'The username must contain more than five characters.';
+  }
+  return null;
+}
+
+// phone number validator
+String? phoneNumberValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter your phone number';
+  } else if (value.length != 10) {
+    return 'The phone number must contain ten characters.';
+  }
+  return null;
+}

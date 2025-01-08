@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vou_games/core/utils/validators/validators.dart';
+import 'package:vou_games/core/widgets/display/snack_bar.dart';
+import 'package:vou_games/features/authentication/domain/entities/sign_up_entity.dart';
+import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
+import 'package:vou_games/features/homepage/presentation/pages/homepage.dart';
 
+import '../../../../../core/widgets/input/validation_textfield.dart';
 import '../../pages/auth/sign_in_page.dart';
 
 class SignUpForm extends StatefulWidget {
@@ -11,11 +18,57 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  bool isVisible = false;
+  final _usernameFieldKey = GlobalKey<ValidationTextFieldState>();
+  final _emailFieldKey = GlobalKey<ValidationTextFieldState>();
+  final _phoneNumberFieldKey = GlobalKey<ValidationTextFieldState>();
+  final _passwordFieldKey = GlobalKey<ValidationTextFieldState>();
+  final _confirmPasswordFieldKey = GlobalKey<ValidationTextFieldState>();
+
+  final String initialUsername = "newuser";
+  final String initialPassword = "password123";
+  final String initialEmail = "lehoangson01633892497@gmail.com";
+  final String initialPhoneNumber = "1234567890";
+  final String initialRole = "PLAYER";
+
+  // set initial values for fields
+  @override
+  void initState() {
+    super.initState();
+    // for demo purposes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _usernameFieldKey.currentState!.setValue(initialUsername);
+      _emailFieldKey.currentState!.setValue(initialEmail);
+      _phoneNumberFieldKey.currentState!.setValue(initialPhoneNumber);
+      _passwordFieldKey.currentState!.setValue(initialPassword);
+      _confirmPasswordFieldKey.currentState!.setValue(initialPassword);
+    });
+  }
+
+  bool _isFormValid() {
+    _usernameFieldKey.currentState!.validate();
+    _emailFieldKey.currentState!.validate();
+    _phoneNumberFieldKey.currentState!.validate();
+    _passwordFieldKey.currentState!.validate();
+    _confirmPasswordFieldKey.currentState!.validate();
+    return _usernameFieldKey.currentState!.isValid() &&
+        _emailFieldKey.currentState!.isValid() &&
+        _phoneNumberFieldKey.currentState!.isValid() &&
+        _passwordFieldKey.currentState!.isValid() &&
+        _confirmPasswordFieldKey.currentState!.isValid();
+  }
+
+  void _submitForm() {
+    if (_isFormValid()) {
+      BlocProvider.of<AuthBloc>(context).add(SignUpWithEmailAndPassEvent(
+          signUpEntity: SignUpEntity(
+              username: _usernameFieldKey.currentState!.text,
+              email: _emailFieldKey.currentState!.text,
+              phoneNumber: _phoneNumberFieldKey.currentState!.text,
+              password: _passwordFieldKey.currentState!.text)));
+    } else {
+      showSnackBar(context, "Form contains errors", type: SnackBarType.error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,21 +81,12 @@ class _SignUpFormState extends State<SignUpForm> {
           children: <Widget>[
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
-              child: TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.text,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter your username';
-                  } else if (false) {
-                    return 'This username is taken';
-                  }
-                  return null;
-                },
+              child: ValidationTextField(
+                key: _usernameFieldKey,
+                hintText: 'Username',
+                labelText: 'Username',
+                validator: usernameValidator,
+                icon: Icons.person,
               ),
             ),
             const SizedBox(
@@ -50,21 +94,12 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
-              child: TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-Mail',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter your E-Mail';
-                  } else if (false) {
-                    return 'Please enter a valid E-Mail';
-                  }
-                  return null;
-                },
+              child: ValidationTextField(
+                key: _emailFieldKey,
+                hintText: 'E-Mail',
+                labelText: 'E-Mail',
+                validator: emailValidator,
+                icon: Icons.email,
               ),
             ),
             const SizedBox(
@@ -72,32 +107,12 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
-              child: TextFormField(
-                controller: _passwordController,
-                obscureText: isVisible ? false : true,
-                decoration: InputDecoration(
-                  labelText: 'Create password',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isVisible = !isVisible;
-                      });
-                    },
-                  ),
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter your password';
-                  } else if (value.length < 5) {
-                    return 'The password must contains more than five characters.';
-                  }
-                  return null;
-                },
+              child: ValidationTextField(
+                key: _phoneNumberFieldKey,
+                hintText: 'Phone Number',
+                labelText: 'Phone Number',
+                validator: phoneNumberValidator,
+                icon: Icons.phone,
               ),
             ),
             const SizedBox(
@@ -105,26 +120,94 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
-              child: TextFormField(
-                controller: _confirmPasswordController,
-                obscureText: isVisible ? false : true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm password',
-                  border: OutlineInputBorder(),
-                ),
+              child: ValidationTextField(
+                key: _passwordFieldKey,
+                hintText: 'Create password',
+                labelText: 'Create password',
+                validator: passwordValidator,
+                icon: Icons.lock,
+                isPassword: true,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: ValidationTextField(
+                key: _confirmPasswordFieldKey,
+                hintText: 'Confirm password',
+                labelText: 'Confirm password',
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter your password confirmation';
-                  } else if (value != _passwordController.text) {
+                  } else if (value != _passwordFieldKey.currentState!.text) {
                     return "Password doesn't match.";
                   }
                   return null;
                 },
+                icon: Icons.lock,
+                isPassword: true,
               ),
             ),
             const SizedBox(
               height: 20,
             ),
+            BlocConsumer<AuthBloc, AuthState>(builder: (context, state) {
+              if (state is AuthLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is AuthErrorState) {
+                return Column(
+                  children: [
+                    Center(
+                      child: Text(
+                        state.message,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        )),
+                        minimumSize:
+                            MaterialStateProperty.all(const Size(500, 50)),
+                        textStyle: MaterialStateProperty.all(
+                            const TextStyle(fontSize: 18)),
+                      ),
+                      child: const Text('Create Account'),
+                    ),
+                  ],
+                );
+              }
+              return ElevatedButton(
+                onPressed: _submitForm,
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  )),
+                  minimumSize: MaterialStateProperty.all(const Size(500, 50)),
+                  textStyle:
+                      MaterialStateProperty.all(const TextStyle(fontSize: 18)),
+                ),
+                child: const Text('Create Account'),
+              );
+            }, listener: (context, state) {
+              if (state is AuthSignedUpState) {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomePage()));
+              } else if(state is AuthPostSignUpState) {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => SignIn(username: state.username, password: state.password)));
+              }
+            }),
             Container(
                 margin: const EdgeInsets.all(20),
                 child: Stack(

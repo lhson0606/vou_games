@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-class SignInEntity extends Equatable {
+class PostSignUpEntity extends Equatable {
   final String username;
   final String password;
   final bool rememberUser;
 
-  const SignInEntity({
+  const PostSignUpEntity({
     required this.username,
     required this.password,
-    this.rememberUser = false,
+    this.rememberUser = true,
   });
 
   @override

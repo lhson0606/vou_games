@@ -8,7 +8,7 @@ class auth_info_usecase {
 
   auth_info_usecase(this.repository);
 
-  Future<Either<Failure, AuthInfoEntity>> call() async {
+  Future<Either<Failure, AuthInfoEntity?>> call() async {
     return await repository.checkAuthInfo();
   }
 }

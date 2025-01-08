@@ -29,21 +29,27 @@ class WrongPasswordFailure extends Failure {
 }
 class UnmatchedPassFailure extends Failure{
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 class NotLoggedInFailure extends Failure{
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 class EmailVerifiedFailure extends Failure{
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 class TooManyRequestsFailure extends Failure{
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 class UnknownFailure extends Failure{
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
+}
+class FailureWithMessage extends Failure{
+  final String message;
+  FailureWithMessage({required this.message});
+  @override
+  List<Object?> get props => [message];
 }

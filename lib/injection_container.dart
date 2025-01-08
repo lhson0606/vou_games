@@ -4,12 +4,14 @@ import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/shared_preferences_service.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
 import 'package:vou_games/features/authentication/data/datasources/auth_firebase_data_source.dart';
+import 'package:vou_games/features/authentication/data/datasources/auth_http_data_source.dart';
 import 'package:vou_games/features/authentication/data/datasources/auth_remote_data_source_contract.dart';
 import 'package:vou_games/features/authentication/data/repositories/auth_repository_impl.dart';
 import 'package:vou_games/features/authentication/domain/repositories/authentication_repository.dart';
 import 'package:vou_games/features/authentication/domain/usescases/check_logged_in_usecase.dart';
 import 'package:vou_games/features/authentication/domain/usescases/log_out_usecase.dart';
 import 'package:vou_games/features/authentication/domain/usescases/sign_in_usecase.dart';
+import 'package:vou_games/features/authentication/domain/usescases/sign_up_usecase.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:vou_games/features/campaign/data/datasources/campaign_data_source_contract.dart';
 import 'package:vou_games/features/campaign/data/datasources/campaign_local_data_source.dart';
@@ -48,6 +50,7 @@ Future<void> init() async {
   //============= Bloc =============
   sl.registerFactory(() => AuthBloc(
         signInUsecase: sl<SignInUseCase>(),
+        signUpUseCase: sl<SignUpUseCase>(),
         logOutUseCase: sl<LogOutUseCase>(),
         checkLoggedInUseCase: sl<CheckLoggedInUseCase>(),
       ));
@@ -62,6 +65,7 @@ Future<void> init() async {
   //============= UseCases =============
   //----------------- Authentication -----------------
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthenticationRepository>()));
+  sl.registerLazySingleton(() => SignUpUseCase(sl<AuthenticationRepository>()));
   sl.registerLazySingleton(() => LogOutUseCase(sl<AuthenticationRepository>()));
   sl.registerLazySingleton(
       () => CheckLoggedInUseCase(sl<AuthenticationRepository>()));
@@ -102,7 +106,7 @@ Future<void> init() async {
   sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
       userDataSource: sl(), networkInfo: sl(), userCredentialService: sl()));
   //============= Datasources =============
-  sl.registerLazySingleton<AuthDataSource>(() => AuthFirebaseDataSource());
+  sl.registerLazySingleton<AuthDataSource>(() => AuthHttpDataSource());
   sl.registerLazySingleton<CampaignDataSource>(() => CampaignLocalDataSource());
   sl.registerLazySingleton<VoucherDataSource>(() => VoucherLocalDataSource());
   sl.registerLazySingleton<NotificationDataSource>(() => NotificationLocalDataSource());

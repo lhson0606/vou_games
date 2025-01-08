@@ -10,7 +10,10 @@ import 'package:vou_games/features/homepage/presentation/pages/homepage.dart';
 import '../../../../../core/widgets/input/validation_textfield.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key});
+  final String? username;
+  final String? password;
+
+  const LoginForm({super.key, this.username, this.password});
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -21,21 +24,62 @@ class _LoginFormState extends State<LoginForm> {
   final _usernameFieldKey = GlobalKey<ValidationTextFieldState>();
   final _passwordFieldKey = GlobalKey<ValidationTextFieldState>();
 
+  // set initial values for fields
+  @override
+  void initState() {
+    super.initState();
+    // for demo purposes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(widget.username != null && widget.password != null) {
+        _setUsernameAndPasswordValues(widget.username!, widget.password!);
+        _showVerifyEmailReminderDialog();
+      }
+    });
+  }
+
   bool _isFormValid() {
     // validate all fields to show error messages
     _usernameFieldKey.currentState!.validate();
     _passwordFieldKey.currentState!.validate();
-    return _usernameFieldKey.currentState!.isValid() && _passwordFieldKey.currentState!.isValid();
+    return _usernameFieldKey.currentState!.isValid() &&
+        _passwordFieldKey.currentState!.isValid();
   }
 
   void _submitForm() {
     if (_isFormValid()) {
-      BlocProvider.of<AuthBloc>(context).add(SignInWithEmailAndPassEvent(
+      BlocProvider.of<AuthBloc>(context).add(SignInWithUsernameAndPassEvent(
           signInEntity: SignInEntity(
-              email: _usernameFieldKey.currentState!.text, password: _passwordFieldKey.currentState!.text)));
+              username: _usernameFieldKey.currentState!.text,
+              password: _passwordFieldKey.currentState!.text)));
     } else {
       showSnackBar(context, "Form contains errors", type: SnackBarType.error);
     }
+  }
+
+  void _setUsernameAndPasswordValues(String username, String password) {
+    _usernameFieldKey.currentState!.setValue(username);
+    _passwordFieldKey.currentState!.setValue(password);
+  }
+
+  void _showVerifyEmailReminderDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Verify your email'),
+          content: const Text(
+              'Please verify your email before signing in. Check your email for the verification link.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -53,7 +97,7 @@ class _LoginFormState extends State<LoginForm> {
                 key: _usernameFieldKey,
                 hintText: 'Username',
                 labelText: 'Username',
-                validator: emailValidator,
+                validator: usernameValidator,
                 icon: Icons.person,
               ),
             ),

@@ -13,11 +13,20 @@ class AuthSignedInEvent extends AuthEvent {}
 
 class AuthCheckLoggingInEvent extends AuthEvent {}
 
-class SignInWithEmailAndPassEvent extends AuthEvent {
+class SignInWithUsernameAndPassEvent extends AuthEvent {
   final SignInEntity signInEntity;
 
-  SignInWithEmailAndPassEvent({required this.signInEntity});
+  SignInWithUsernameAndPassEvent({required this.signInEntity});
 
   @override
   List<Object> get props => [signInEntity];
+}
+
+class SignUpWithEmailAndPassEvent extends AuthEvent {
+  final SignUpEntity signUpEntity;
+
+  SignUpWithEmailAndPassEvent({required this.signUpEntity});
+
+  @override
+  List<Object> get props => [signUpEntity];
 }

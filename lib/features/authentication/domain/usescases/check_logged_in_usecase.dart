@@ -9,7 +9,7 @@ class CheckLoggedInUseCase {
 
   CheckLoggedInUseCase(this._repository);
 
-  Future<Either<Failure, AuthInfoEntity>> call() async {
+  Future<Either<Failure, AuthInfoEntity?>> call() async {
     return _repository.checkAuthInfo();
   }
 }

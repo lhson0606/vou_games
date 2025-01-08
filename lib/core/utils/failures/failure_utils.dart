@@ -15,6 +15,10 @@ String failureToErrorMessage(Failure failure) {
     case WrongPasswordFailure():
       return WRONG_PASSWORD_FAILURE_MESSAGE;
     default:
+      if (failure is FailureWithMessage) {
+        return failure.message;
+      }
+
       return UNEXPECTED_FAILURE_MESSAGE;
   }
 }
