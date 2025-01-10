@@ -14,12 +14,20 @@ import 'package:vou_games/features/authentication/domain/usescases/sign_in_useca
 import 'package:vou_games/features/authentication/domain/usescases/sign_up_usecase.dart';
 import 'package:vou_games/features/authentication/presentation/bloc/auth_bloc.dart';
 import 'package:vou_games/features/campaign/data/datasources/campaign_data_source_contract.dart';
+import 'package:vou_games/features/campaign/data/datasources/campaign_http_data_source.dart';
 import 'package:vou_games/features/campaign/data/datasources/campaign_local_data_source.dart';
 import 'package:vou_games/features/campaign/data/repositories/campaign_repository_impl.dart';
 import 'package:vou_games/features/campaign/domain/repositories/campaign_repository.dart';
 import 'package:vou_games/features/campaign/domain/usecases/get_up_coming_campaign_usecase.dart';
+import 'package:vou_games/features/campaign/domain/usecases/search_campaign_usecase.dart';
 import 'package:vou_games/features/campaign/presentation/bloc/campaign_bloc.dart';
 import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
+import 'package:vou_games/features/games/data/datasources/game_data_source_contract.dart';
+import 'package:vou_games/features/games/data/datasources/game_http_data_source.dart';
+import 'package:vou_games/features/games/data/repositories/game_repository_impl.dart';
+import 'package:vou_games/features/games/domain/repositories/game_repository.dart';
+import 'package:vou_games/features/games/domain/usecases/get_campaign_game_types_string.dart';
+import 'package:vou_games/features/games/presentation/bloc/game_bloc.dart';
 import 'package:vou_games/features/homepage/presentation/bloc/homepage_navigator_bloc.dart';
 import 'package:vou_games/features/notification/data/datasources/notification_datasource_contract.dart';
 import 'package:vou_games/features/notification/data/datasources/notification_local_data_source.dart';
@@ -54,12 +62,14 @@ Future<void> init() async {
         logOutUseCase: sl<LogOutUseCase>(),
         checkLoggedInUseCase: sl<CheckLoggedInUseCase>(),
       ));
-  sl.registerFactory(() => CampaignBloc(getUpComingCampaignUseCase: sl()));
+  sl.registerFactory(() => CampaignBloc(
+      getUpComingCampaignUseCase: sl(), searchCampaignUseCase: sl()));
   sl.registerFactory(() => VoucherBloc(getAllUserVoucherUsecase: sl()));
   sl.registerFactory(() => ShopBloc());
   sl.registerFactory(() => NotificationBloc(getUserNotificationUseCase: sl()));
   sl.registerFactory(() => UserBloc(getUserProfileUseCase: sl()));
   sl.registerFactory(() => HomepageNavigatorBloc());
+  sl.registerFactory(() => GameBloc(getCampaignGameTypesStringUseCase: sl()));
   sl.registerFactory(() => QuizBloc());
   sl.registerFactory(() => DiceBloc());
   //============= UseCases =============
@@ -69,12 +79,15 @@ Future<void> init() async {
   sl.registerLazySingleton(() => LogOutUseCase(sl<AuthenticationRepository>()));
   sl.registerLazySingleton(
       () => CheckLoggedInUseCase(sl<AuthenticationRepository>()));
+  sl.registerLazySingleton(() => SearchCampaignUseCase(sl()));
   //----------------- Campaign -----------------
   sl.registerLazySingleton(
       () => GetUpComingCampaignUseCase(sl<CampaignRepository>()));
   //----------------- Voucher -----------------
   sl.registerLazySingleton(() => GetAllUserVoucherUsecase(sl()));
   //----------------- Shop -----------------
+  //----------------- Game -----------------
+  sl.registerLazySingleton(() => GetCampaignGameTypesStringUseCase(sl()));
   //----------------- Notification -----------------
   sl.registerLazySingleton(() => GetUserNotificationUseCase(sl()));
   //----------------- User -----------------
@@ -105,12 +118,19 @@ Future<void> init() async {
           userCredentialService: sl()));
   sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(
       userDataSource: sl(), networkInfo: sl(), userCredentialService: sl()));
+  sl.registerLazySingleton<GameRepository>(() => GameRepositoryImpl(
+        dataSource: sl(),
+        networkInfo: sl(),
+        userCredentialService: sl(),
+      ));
   //============= Datasources =============
   sl.registerLazySingleton<AuthDataSource>(() => AuthHttpDataSource());
-  sl.registerLazySingleton<CampaignDataSource>(() => CampaignLocalDataSource());
+  sl.registerLazySingleton<CampaignDataSource>(() => CampaignHttpDataSource());
   sl.registerLazySingleton<VoucherDataSource>(() => VoucherLocalDataSource());
-  sl.registerLazySingleton<NotificationDataSource>(() => NotificationLocalDataSource());
+  sl.registerLazySingleton<NotificationDataSource>(
+      () => NotificationLocalDataSource());
   sl.registerLazySingleton<UserDataSource>(() => UserLocalDataSource());
+  sl.registerLazySingleton<GameDataSource>(() => GameHttpDataSource());
 
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

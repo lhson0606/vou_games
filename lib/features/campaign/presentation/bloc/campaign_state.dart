@@ -9,22 +9,22 @@ abstract class CampaignState extends Equatable{
 
 final class CampaignInitialState extends CampaignState {}
 
-final class UpcomingCampaignLoadingState extends CampaignState {}
+final class LoadingCampaignState extends CampaignState {}
 
-final class UpcomingCampaignErrorState extends CampaignState {
+final class LoadingCampaignErrorState extends CampaignState {
   final String error;
   final DateTime timestamp = DateTime.now();
 
-  UpcomingCampaignErrorState({required this.error});
+  LoadingCampaignErrorState({required this.error});
 
   @override
   List<Object> get props => [error, timestamp];
 }
 
-final class UpcomingCampaignLoadedState extends CampaignState {
+final class CampaignsLoadedState extends CampaignState {
   final List<CampaignEntity> campaignList;
 
-  const UpcomingCampaignLoadedState({required this.campaignList});
+  const CampaignsLoadedState({required this.campaignList});
 
   @override
   List<Object> get props => [campaignList];

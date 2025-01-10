@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:vou_games/core/error/exceptions.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/features/campaign/data/datasources/campaign_data_source_contract.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
@@ -27,6 +28,27 @@ class CampaignRepositoryImpl implements CampaignRepository {
       try {
         final campaigns = await campaignDataSource.getUpComingCampaigns();
         return Right(campaigns);
+      } on ExceptionWithMessage catch (e) {
+        return Left(FailureWithMessage(message: e.message));
+      } on Exception {
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CampaignEntity>>> searchCampaign(
+      String query) async {
+    if (await networkInfo.isConnected
+        .timeout(const Duration(seconds: 10), onTimeout: () => false)) {
+      try {
+        final campaigns = await campaignDataSource.searchCampaign(query);
+        // final campaignEntities = campaigns.map((e) => e as CampaignEntity).toList();
+        return Right(campaigns);
+      } on ExceptionWithMessage catch (e) {
+        return Left(FailureWithMessage(message: e.message));
       } on Exception {
         return Left(UnknownFailure());
       }

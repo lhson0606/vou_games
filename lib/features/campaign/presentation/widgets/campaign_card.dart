@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vou_games/configs/lottie/app_lottie.dart';
-import 'package:vou_games/features/authentication/presentation/bloc/splash_cubit.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
 import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
+import 'package:vou_games/features/games/presentation/bloc/game_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 
-class CampaignCard extends StatelessWidget {
+class CampaignCard extends StatefulWidget {
   final CampaignEntity campaign;
 
   const CampaignCard({super.key, required this.campaign});
 
+  @override
+  State<CampaignCard> createState() => _CampaignCardState();
+}
+
+class _CampaignCardState extends State<CampaignCard> {
   String getDueTime() {
     final now = DateTime.now();
-    final startDate = DateTime.parse(campaign.startDate);
-    final endDate = DateTime.parse(campaign.endDate);
+    final startDate = DateTime.parse(widget.campaign.startDate);
+    final endDate = DateTime.parse(widget.campaign.endDate);
 
     if (now.isBefore(startDate)) {
       final duration = startDate.difference(now);
@@ -30,9 +35,19 @@ class CampaignCard extends StatelessWidget {
 
   bool isJoinable() {
     final now = DateTime.now();
-    final startDate = DateTime.parse(campaign.startDate);
-    final endDate = DateTime.parse(campaign.endDate);
+    final startDate = DateTime.parse(widget.campaign.startDate);
+    final endDate = DateTime.parse(widget.campaign.endDate);
     return now.isAfter(startDate) && now.isBefore(endDate);
+  }
+
+  bool isLoadingGameTypes = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<GameBloc>()
+        .add(GetCampaignGameTypesStringEvent(widget.campaign.id));
   }
 
   void _showGameTypeBottomSheet(BuildContext context) {
@@ -43,11 +58,13 @@ class CampaignCard extends StatelessWidget {
       ),
       builder: (BuildContext context) {
         return FractionallySizedBox(
-          heightFactor: 0.5, // Adjust this value to cover half or one-third of the screen
+          heightFactor: 0.5,
+          // Adjust this value to cover half or one-third of the screen
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16.0)),
             ),
             child: Column(
               children: [
@@ -75,9 +92,10 @@ class CampaignCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView(
-                    children: campaign.gameTypes.map((gameType) {
+                    children: widget.campaign.gameTypes.map((gameType) {
                       return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12.0),
@@ -92,13 +110,16 @@ class CampaignCard extends StatelessWidget {
                           border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: ListTile(
-                          leading: Lottie.asset(AppLottie.getPath(gameType), width: 40.0),
+                          leading: Lottie.asset(AppLottie.getPath(gameType),
+                              width: 40.0),
                           title: Center(child: Text(gameType)),
                           onTap: () {
-                            if(gameType == 'quiz') {
-                              context.read<QuizBloc>().add(PlayQuizEvent(campaignId: campaign.id));
+                            if (gameType == 'quiz') {
+                              context.read<QuizBloc>().add(PlayQuizEvent(
+                                  campaignId: widget.campaign.id));
                             } else {
-                              context.read<DiceBloc>().add(PlayDiceEvent(campaignId: campaign.id));
+                              context.read<DiceBloc>().add(PlayDiceEvent(
+                                  campaignId: widget.campaign.id));
                             }
                           },
                         ),
@@ -117,14 +138,16 @@ class CampaignCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).colorScheme.inversePrimary, // Use theme color for background
+      color: Theme.of(context)
+          .colorScheme
+          .inversePrimary, // Use theme color for background
       elevation: 4.0,
       margin: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Image.network(
-            campaign.imageUrl,
+            widget.campaign.imageUrl,
             width: double.infinity,
             height: 200.0,
             fit: BoxFit.cover,
@@ -135,16 +158,18 @@ class CampaignCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  campaign.name,
+                  widget.campaign.name,
                   style: const TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: isJoinable() ? () {
-                    _showGameTypeBottomSheet(context);
-                  } : null,
+                  onPressed: isJoinable()
+                      ? () {
+                          _showGameTypeBottomSheet(context);
+                        }
+                      : null,
                   child: const Text('Join'),
                 ),
               ],
@@ -157,41 +182,59 @@ class CampaignCard extends StatelessWidget {
               style: const TextStyle(fontSize: 14.0),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Wrap(
-              spacing: 4.0,
-              runSpacing: 4.0,
-              children: campaign.gameTypes.map((gameType) {
-                Color chipColor;
-                switch (gameType) {
-                  case 'shake dice':
-                    chipColor = Colors.blue;
-                    break;
-                  case 'quiz':
-                    chipColor = Colors.green;
-                    break;
-                  default:
-                    chipColor = Colors.grey;
-                }
-                return Chip(
-                  label: Text(
-                    gameType,
-                    style: const TextStyle(fontSize: 12.0),
-                  ),
-                  shape: StadiumBorder(
-                    side: BorderSide(color: chipColor),
-                  ),
-                  backgroundColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                );
-              }).toList(),
-            ),
+          BlocBuilder<GameBloc, GameState>(
+            builder: (context, state) {
+              if (state is GameTypesStringLoadingState &&
+                  state.campaignId == widget.campaign.id) {
+                isLoadingGameTypes = true;
+                return const LinearProgressIndicator();
+              }
+
+              if (state is! GameTypesStringLoadedState || state.campaignId != widget.campaign.id || isLoadingGameTypes) {
+                return const SizedBox.shrink();
+              }
+
+              isLoadingGameTypes = false;
+
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Wrap(
+                  spacing: 4.0,
+                  runSpacing: 4.0,
+                  // campaigns game types string
+                  children: state.gameTypesString.map((gameType) {
+                    Color chipColor;
+                    switch (gameType) {
+                      case 'shake dice':
+                        chipColor = Colors.blue;
+                        break;
+                      case 'quiz':
+                        chipColor = Colors.green;
+                        break;
+                      default:
+                        chipColor = Colors.grey;
+                    }
+                    return Chip(
+                      label: Text(
+                        gameType,
+                        style: const TextStyle(fontSize: 12.0),
+                      ),
+                      shape: StadiumBorder(
+                        side: BorderSide(color: chipColor),
+                      ),
+                      backgroundColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              campaign.description,
+              widget.campaign.description,
               style: const TextStyle(fontSize: 14.0),
             ),
           ),
@@ -203,7 +246,7 @@ class CampaignCard extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(Icons.location_pin),
-                    Text(campaign.location),
+                    Text(widget.campaign.location),
                   ],
                 ),
                 Row(
@@ -211,16 +254,16 @@ class CampaignCard extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         Icons.favorite,
-                        color: campaign.liked ? Colors.red : Colors.grey,
+                        color: widget.campaign.liked ? Colors.red : Colors.grey,
                       ),
                       onPressed: () {
                         // Handle like button press
                       },
                     ),
                     Text(
-                      campaign.status == 'active'
-                          ? '${campaign.likesCount} likes'
-                          : '${campaign.participantsCount} participants',
+                      widget.campaign.status == 'active'
+                          ? '${widget.campaign.likesCount} likes'
+                          : '${widget.campaign.participantsCount} participants',
                     ),
                   ],
                 ),

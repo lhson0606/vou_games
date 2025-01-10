@@ -1,6 +1,7 @@
+import 'package:vou_games/core/network/json_model.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
 
-class CampaignModel extends CampaignEntity {
+class CampaignModel extends CampaignEntity implements JsonModel{
   const CampaignModel({
     required super.id,
     required super.name,
@@ -9,11 +10,6 @@ class CampaignModel extends CampaignEntity {
     required super.startDate,
     required super.endDate,
     required super.status,
-    super.location,
-    required super.gameTypes,
-    required super.liked,
-    required super.likesCount,
-    required super.participantsCount,
   });
 
   factory CampaignModel.fromJson(Map<String, dynamic> json) {
@@ -25,28 +21,18 @@ class CampaignModel extends CampaignEntity {
       startDate: json['startDate'],
       endDate: json['endDate'],
       status: json['status'],
-      location: json['location'],
-      gameTypes: List<String>.from(json['gameTypes']),
-      liked: json['liked'],
-      likesCount: json['likesCount'],
-      participantsCount: json['participantsCount'],
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'imageUrl': imageUrl,
-      'startDate': startDate,
-      'endDate': endDate,
-      'status': status,
-      'location': location,
-      'gameTypes': gameTypes,
-      'liked': liked,
-      'likesCount': likesCount,
-      'participantsCount': participantsCount,
-    };
+    // TODO: implement toJsonString
+    throw UnimplementedError();
+  }
+
+  @override
+  String toJsonString() {
+    // TODO: implement toJsonString
+    throw UnimplementedError();
   }
 }

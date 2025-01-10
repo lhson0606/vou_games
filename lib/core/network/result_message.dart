@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 class ResultMessage {
   final int status;
   final String message;
-  final Map<String, dynamic>? data;
+  final Object? data;
 
   ResultMessage({
     required this.status,
@@ -14,7 +14,8 @@ class ResultMessage {
   });
 
   factory ResultMessage.fromResponse(Response response) {
-    return ResultMessage.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return ResultMessage.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   factory ResultMessage.fromJson(Map<String, dynamic> json) {

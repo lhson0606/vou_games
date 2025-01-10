@@ -8,6 +8,7 @@ class CampaignEntity extends Equatable {
   final String startDate;
   final String endDate;
   final String status;
+  final int? brandId;
   final String location;
   final List<String> gameTypes;
   final bool liked;
@@ -22,11 +23,12 @@ class CampaignEntity extends Equatable {
     required this.startDate,
     required this.endDate,
     required this.status,
+    this.brandId,
     this.location = "",
-    required this.gameTypes,
-    required this.liked,
-    required this.likesCount,
-    required this.participantsCount,
+    this.gameTypes = const [],
+    this.liked = false,
+    this.likesCount = 0,
+    this.participantsCount = 0,
   });
 
   @override

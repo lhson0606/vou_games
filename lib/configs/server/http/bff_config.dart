@@ -1,7 +1,13 @@
 import 'dart:io';
 
+const isDeployed = bool.fromEnvironment('IS_DEPLOYED', defaultValue: false);
+
 /// Get the host based on the platform because the emulator uses a different host than the physical device
 String getHost() {
+  if(isDeployed) {
+    return '';
+  }
+
   if (Platform.isAndroid || Platform.isIOS) {
     return 'http://10.0.2.2:';
   } else {
@@ -10,6 +16,7 @@ String getHost() {
 }
 
 const int port = 8080;
+
 const Map<String, String> headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
@@ -26,4 +33,13 @@ class Auth {
   static final String register = '$baseUrl/register';
   static final String verifyEmail = '$baseUrl/verify-email';
   static final String login = '$baseUrl/login';
+}
+
+// --- Campaign ---
+class Campaign {
+  static final String host = getHost();
+  static const String requestMapping = '/api/core/campaigns';
+  static final String baseUrl = '$host$port$requestMapping';
+  static final String campaigns = baseUrl;
+  static final String search = '$baseUrl/search';
 }

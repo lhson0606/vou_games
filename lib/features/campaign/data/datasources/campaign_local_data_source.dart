@@ -10,4 +10,10 @@ class CampaignLocalDataSource extends CampaignDataSource {
     final List<dynamic> jsonList = json.decode(MOCK_CAMPAIGNS_JSON);
     return Future.value(jsonList.map((e) => CampaignModel.fromJson(e)).toList());
   }
+
+  @override
+  Future<List<CampaignModel>> searchCampaign(String query) {
+    // TODO: implement searchCampaign
+    throw UnimplementedError();
+  }
 }

@@ -22,6 +22,17 @@ class CampaignHomePageState extends State<CampaignHomePage> {
     context.read<CampaignBloc>().add(GetUpComingCampaignEvent());
   }
 
+  void searchCampaigns(String term) {
+    if(term == "") {
+      context.read<CampaignBloc>().add(GetUpComingCampaignEvent());
+      return;
+    }
+
+    context.read<CampaignBloc>().add(
+      SearchCampaignEvent(term),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -36,23 +47,25 @@ class CampaignHomePageState extends State<CampaignHomePage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    suffixIcon: Icon(Icons.clear),
-                    hintText: 'Search campaigns',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      suffixIcon: Icon(Icons.clear),
+                      hintText: 'Search campaigns',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (term) {
+                      searchCampaigns(term);
+                    }),
               ),
               Expanded(
                 child: BlocConsumer<CampaignBloc, CampaignState>(
                   builder: (context, state) {
-                    if (state is UpcomingCampaignLoadingState) {
+                    if (state is LoadingCampaignState) {
                       return const Center(child: CircularProgressIndicator());
-                    } else if (state is UpcomingCampaignLoadedState) {
+                    } else if (state is CampaignsLoadedState) {
                       return ListView.builder(
                         itemCount: state.campaignList.length,
                         itemBuilder: (context, index) {
@@ -60,17 +73,16 @@ class CampaignHomePageState extends State<CampaignHomePage> {
                           return CampaignCard(campaign: campaign);
                         },
                       );
-                    } else if (state is UpcomingCampaignErrorState) {
+                    } else if (state is LoadingCampaignErrorState) {
                       return Center(
                         child: Text(state.error),
                       );
-                    }
-                      else {
+                    } else {
                       return const SizedBox();
                     }
                   },
                   listener: (context, state) {
-                    if (state is UpcomingCampaignErrorState) {
+                    if (state is LoadingCampaignErrorState) {
                       showSnackBar(context, state.error,
                           type: SnackBarType.error);
                     }
