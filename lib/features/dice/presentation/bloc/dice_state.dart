@@ -16,3 +16,29 @@ final class RequestNavigateToDiceState extends DiceState {
   @override
   List<Object?> get props => [dicePage, timeStamp];
 }
+
+final class DiceRollingState extends DiceState {
+  final DateTime timeStamp = DateTime.now();
+
+  @override
+  List<Object?> get props => [timeStamp];
+}
+
+final class DiceRolledState extends DiceState {
+  final DiceResultEntity diceResult;
+  final DateTime timeStamp = DateTime.now();
+
+  DiceRolledState({required this.diceResult});
+
+  @override
+  List<Object?> get props => [diceResult, timeStamp];
+}
+
+final class DiceRollFailedState extends DiceState {
+  final String message;
+
+  DiceRollFailedState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

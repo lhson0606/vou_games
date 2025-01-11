@@ -43,14 +43,13 @@ class _CampaignCardState extends State<CampaignCard> {
   }
 
   bool isLoadingGameTypes = false;
+  bool hasErrorWhenLoadingCampaignGames = false;
   List<GameEntity> games = [];
 
   @override
   void initState() {
     super.initState();
-    context
-        .read<GameBloc>()
-        .add(GetCampaignGameTypesStringEvent(widget.campaign.id));
+    context.read<GameBloc>().add(GetCampaignGamesEvent(widget.campaign.id));
   }
 
   void _showGameTypeBottomSheet(BuildContext context) {
@@ -113,7 +112,8 @@ class _CampaignCardState extends State<CampaignCard> {
                           border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: ListTile(
-                          leading: Lottie.asset(AppLottie.getPath(game.gameType.name),
+                          leading: Lottie.asset(
+                              AppLottie.getPath(game.gameType.name),
                               width: 40.0),
                           title: Center(child: Text(game.gameType.name)),
                           onTap: () {
@@ -122,7 +122,8 @@ class _CampaignCardState extends State<CampaignCard> {
                                   campaignId: widget.campaign.id));
                             } else if (game.gameType.name == roll_dice_string) {
                               context.read<DiceBloc>().add(PlayDiceEvent(
-                                  campaignId: widget.campaign.id));
+                                  campaignId: widget.campaign.id,
+                                  gameId: game.id));
                             }
 
                             // close the bottom sheet
@@ -155,11 +156,19 @@ class _CampaignCardState extends State<CampaignCard> {
               state.campaignId == widget.campaign.id) {
             setState(() {
               games = state.games;
+              isLoadingGameTypes = false;
             });
-            isLoadingGameTypes = false;
           } else if (state is CampaignGamesLoadingState &&
               state.campaignId == widget.campaign.id) {
-            isLoadingGameTypes = true;
+            setState(() {
+              isLoadingGameTypes = true;
+            });
+          } else if (state is CampaignGamesErrorState &&
+              state.campaignId == widget.campaign.id) {
+            setState(() {
+              hasErrorWhenLoadingCampaignGames = true;
+              isLoadingGameTypes = false;
+            });
           }
         },
         child: Column(
@@ -201,7 +210,32 @@ class _CampaignCardState extends State<CampaignCard> {
                 style: const TextStyle(fontSize: 14.0),
               ),
             ),
-            if (isLoadingGameTypes)
+            if (hasErrorWhenLoadingCampaignGames)
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Flexible(
+                        child: Text(
+                          'Error loading games',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.refresh),
+                        onPressed: () {
+                          setState(() {
+                            hasErrorWhenLoadingCampaignGames = false;
+                          });
+                          context
+                              .read<GameBloc>()
+                              .add(GetCampaignGamesEvent(widget.campaign.id));
+                        },
+                      ),
+                    ],
+                  ))
+            else if (isLoadingGameTypes)
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: LinearProgressIndicator(),

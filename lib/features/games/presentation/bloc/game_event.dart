@@ -4,10 +4,10 @@ abstract class GameEvent extends Equatable {
   const GameEvent();
 }
 
-class GetCampaignGameTypesStringEvent extends GameEvent {
+class GetCampaignGamesEvent extends GameEvent {
   final int campaignId;
 
-  const GetCampaignGameTypesStringEvent(this.campaignId);
+  const GetCampaignGamesEvent(this.campaignId);
 
   @override
   List<Object?> get props => [];

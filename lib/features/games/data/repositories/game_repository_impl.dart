@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:vou_games/configs/policies/general_policies.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
@@ -17,16 +18,16 @@ class GameRepositoryImpl implements GameRepository {
   Future<Either<Failure, List<GameEntity>>> getCampaignGames(int campaignId) async {
 
     if (await networkInfo.isConnected
-      .timeout(const Duration(seconds: 10), onTimeout: () => false)
+      .timeout(const Duration(milliseconds: max_general_wait_time_ms), onTimeout: () => false)
     ) {
       try {
         final games = await dataSource.getCampaignGames(campaignId);
         return Right(games);
       } catch (e) {
-        return Right([]);
+        return Left(UnknownFailure());
       }
     } else {
-      return Right([]);
+      return Left(OfflineFailure());
     }
   }
 }

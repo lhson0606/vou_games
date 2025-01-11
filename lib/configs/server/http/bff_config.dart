@@ -5,7 +5,7 @@ const isDeployed = bool.fromEnvironment('IS_DEPLOYED', defaultValue: false);
 /// Get the host based on the platform because the emulator uses a different host than the physical device
 String getHost() {
   if(isDeployed) {
-    return '';
+    return 'deployed host address here';
   }
 
   if (Platform.isAndroid || Platform.isIOS) {
@@ -54,4 +54,12 @@ class Campaign {
   static final String campaigns = baseUrl;
   static final String search = '$baseUrl/search';
   static final String game = '$baseUrl/{campaignId}/games';
+}
+
+// --- Game ---
+class ShakeGame {
+  static final String host = getHost();
+  static const String requestMapping = '/api/core/games';
+  static final String baseUrl = '$host$port$requestMapping';
+  static final String playShakeGame = '$baseUrl/shake';
 }

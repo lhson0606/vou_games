@@ -1,0 +1,1 @@
+const int max_general_wait_time_ms = 5000;

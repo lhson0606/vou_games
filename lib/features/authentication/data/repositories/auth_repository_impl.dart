@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
+import 'package:vou_games/configs/policies/general_policies.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/shared_preferences_service.dart';
@@ -55,7 +56,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   Future<Either<Failure, Unit>> logOut() async {
     try {
       final logOutUnit = await authDataSource.logOut().timeout(
-          const Duration(seconds: 10),
+          const Duration(milliseconds: max_general_wait_time_ms),
           onTimeout: () => throw ServerException());
       saveUserCredential(null);
       // remove from local
@@ -72,12 +73,12 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   Future<Either<Failure, AuthInfoEntity>> signIn(
       SignInEntity signInPayload) async {
     if (await networkInfo.isConnected
-        .timeout(const Duration(seconds: 10), onTimeout: () => false)) {
+        .timeout(const Duration(milliseconds: max_general_wait_time_ms), onTimeout: () => false)) {
       try {
         SignInModel signInModel = SignInModel(
             username: signInPayload.username, password: signInPayload.password);
         final userCredential = await authDataSource.signIn(signInModel).timeout(
-            const Duration(seconds: 10),
+            const Duration(milliseconds: max_general_wait_time_ms),
             onTimeout: () => throw ServerException());
         saveUserCredential(userCredential);
         saveToUserService(userCredential);
@@ -106,7 +107,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   Future<Either<Failure, PostSignUpEntity>> signUp(
       SignUpEntity signUpPalLoad) async {
     if (await networkInfo.isConnected
-        .timeout(const Duration(seconds: 10), onTimeout: () => false)) {
+        .timeout(const Duration(milliseconds: max_general_wait_time_ms), onTimeout: () => false)) {
       try {
         final SignUpModel signUpModel = SignUpModel(
             username: signUpPalLoad.username,
@@ -115,7 +116,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
             password: signUpPalLoad.password);
         final PostSignUpModel authInfoModel = await authDataSource
             .signUp(signUpModel)
-            .timeout(const Duration(seconds: 10),
+            .timeout(const Duration(milliseconds: max_general_wait_time_ms),
                 onTimeout: () => throw ServerException());
         return Right(authInfoModel);
       } on ExistedAccountException {
@@ -141,7 +142,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   @override
   Future<Either<Failure, AuthInfoEntity?>> checkAuthInfo() async {
     if (!(await networkInfo.isConnected
-        .timeout(const Duration(seconds: 10), onTimeout: () => false))) {
+        .timeout(const Duration(milliseconds: max_general_wait_time_ms), onTimeout: () => false))) {
       return Left(OfflineFailure());
     }
     AuthInfoModel? authInfoModel = loadUserCredential();

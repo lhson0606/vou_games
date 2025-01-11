@@ -30,3 +30,16 @@ final class CampaignGamesLoadingState extends GameState {
   @override
   List<Object?> get props => [campaignId];
 }
+
+final class CampaignGamesErrorState extends GameState {
+  final int campaignId;
+  final String message;
+
+  CampaignGamesErrorState({
+    required this.campaignId,
+    required this.message,
+  });
+
+  @override
+  List<Object?> get props => [campaignId];
+}

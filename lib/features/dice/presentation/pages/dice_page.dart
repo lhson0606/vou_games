@@ -1,13 +1,16 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:vou_games/configs/lottie/app_lottie.dart';
+import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
 import '../../../../core/widgets/dialogues/confirm_dialogue.dart';
 
 class DicePage extends StatefulWidget {
   final int campaignId;
-  const DicePage({super.key, required this.campaignId});
+  final int gameId;
+  const DicePage({super.key, required this.campaignId, required this.gameId});
 
   @override
   _DicePageState createState() => _DicePageState();
@@ -24,7 +27,7 @@ class _DicePageState extends State<DicePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this);
-    userAccelerometerEvents.listen(
+    userAccelerometerEventStream().listen(
           (UserAccelerometerEvent event) {
         if (event.x.abs() > 2 || event.y.abs() > 2 || event.z.abs() > 2) {
           if (!_isShaking) {
@@ -49,7 +52,11 @@ class _DicePageState extends State<DicePage> with SingleTickerProviderStateMixin
       _attemptsLeft--;
     });
     Navigator.of(context).pop(); // Close the shake dialog
-    _animationController.forward(from: 0).whenComplete(_showResultDialog);
+    _animationController.forward(from: 0).whenComplete(_callRollDice);
+  }
+
+  void _callRollDice() {
+    context.read<DiceBloc>().add(StartRollingDiceEvent(widget.gameId));
   }
 
   void _showShakeDialog() {

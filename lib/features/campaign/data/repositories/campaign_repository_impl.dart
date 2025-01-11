@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:vou_games/configs/policies/general_policies.dart';
 import 'package:vou_games/core/error/exceptions.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/features/campaign/data/datasources/campaign_data_source_contract.dart';
@@ -24,7 +25,7 @@ class CampaignRepositoryImpl implements CampaignRepository {
   @override
   Future<Either<Failure, List<CampaignEntity>>> getUpComingCampaigns() async {
     if (await networkInfo.isConnected
-        .timeout(const Duration(seconds: 10), onTimeout: () => false)) {
+        .timeout(const Duration(milliseconds: max_general_wait_time_ms), onTimeout: () => false)) {
       try {
         final campaigns = await campaignDataSource.getUpComingCampaigns();
         return Right(campaigns);
@@ -42,7 +43,7 @@ class CampaignRepositoryImpl implements CampaignRepository {
   Future<Either<Failure, List<CampaignEntity>>> searchCampaign(
       String query) async {
     if (await networkInfo.isConnected
-        .timeout(const Duration(seconds: 10), onTimeout: () => false)) {
+        .timeout(const Duration(milliseconds: max_general_wait_time_ms), onTimeout: () => false)) {
       try {
         final campaigns = await campaignDataSource.searchCampaign(query);
         // final campaignEntities = campaigns.map((e) => e as CampaignEntity).toList();

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:vou_games/configs/policies/general_policies.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
@@ -19,7 +20,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   Future<Either<Failure, List<NotificationEntity>>> getUserNotification() async {
     if (await networkInfo.isConnected
-        .timeout(const Duration(seconds: 10), onTimeout: () => false)) {
+        .timeout(const Duration(milliseconds: max_general_wait_time_ms), onTimeout: () => false)) {
       try {
         final notifications = await notificationDataSource.getUserNotification();
         return Right(notifications);
