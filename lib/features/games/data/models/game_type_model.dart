@@ -1,8 +1,10 @@
 import 'package:vou_games/core/network/json_model.dart';
+import 'package:vou_games/core/utils/strings/string_utils.dart';
 import 'package:vou_games/features/games/domain/entities/game_entity.dart';
+import 'package:vou_games/features/games/domain/entities/game_type_entity.dart';
 
-class GameTypeModel extends GameEntity implements JsonModel {
-  const GameTypeModel({required super.id, required super.allowPieceExchange, required super.startAt, required super.type, required super.campaignId});
+class GameTypeModel extends GameTypeEntity implements JsonModel {
+  const GameTypeModel({required super.id, required super.name, required super.isRealTime, required super.imageUrl, required super.instruction});
 
   @override
   Map<String, dynamic> toJson() {
@@ -16,4 +18,13 @@ class GameTypeModel extends GameEntity implements JsonModel {
     throw UnimplementedError();
   }
 
+  factory GameTypeModel.fromJson(Map<String, dynamic> json) {
+    return GameTypeModel(
+      id: json['id'],
+      name: json['name'],
+      isRealTime: json['isRealtime'],
+      imageUrl: json['imageUrl'],
+      instruction: StringUtils.decodeVNString(json['instruction']),
+    );
+  }
 }

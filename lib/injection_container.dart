@@ -130,7 +130,7 @@ Future<void> init() async {
   sl.registerLazySingleton<NotificationDataSource>(
       () => NotificationLocalDataSource());
   sl.registerLazySingleton<UserDataSource>(() => UserLocalDataSource());
-  sl.registerLazySingleton<GameDataSource>(() => GameHttpDataSource());
+  sl.registerLazySingleton<GameDataSource>(() => GameHttpDataSource(userCredentialService: sl()));
 
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

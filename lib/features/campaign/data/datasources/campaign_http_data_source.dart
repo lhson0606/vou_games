@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 class CampaignHttpDataSource extends CampaignDataSource {
   @override
   Future<List<CampaignModel>> getUpComingCampaigns() async {
-    UpComingCampaignUrlBuilder builder = BuilderFactory.createCampaignUrlBuilder();
+    UpComingCampaignUrlBuilder builder = UrlBuilderFactory.createCampaignUrlBuilder();
     final DateTime now = DateTime.now();
     final DateTime startOfThisMonth = DateTime(now.year, now.month, 1);
     final DateTime endOfThisMonth = DateTime(now.year, now.month + 1, 0);
@@ -52,7 +52,7 @@ class CampaignHttpDataSource extends CampaignDataSource {
 
   @override
   Future<List<CampaignModel>> searchCampaign(String query) async {
-    SearchCampaignUrlBuilder builder = BuilderFactory.createSearchCampaignUrlBuilder();
+    SearchCampaignUrlBuilder builder = UrlBuilderFactory.createSearchCampaignUrlBuilder();
     final url = builder.term(query).build();
 
     http.Response response;

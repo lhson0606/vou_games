@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,15 +24,17 @@ class CampaignHomePageState extends State<CampaignHomePage> {
     context.read<CampaignBloc>().add(GetUpComingCampaignEvent());
   }
 
-  void searchCampaigns(String term) {
-    if(term == "") {
-      context.read<CampaignBloc>().add(GetUpComingCampaignEvent());
-      return;
-    }
+  Timer? _debounce;
 
-    context.read<CampaignBloc>().add(
-      SearchCampaignEvent(term),
-    );
+  void searchCampaigns(String term) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(seconds: 1), () {
+      if (term.isEmpty) {
+        context.read<CampaignBloc>().add(GetUpComingCampaignEvent());
+      } else {
+        context.read<CampaignBloc>().add(SearchCampaignEvent(term));
+      }
+    });
   }
 
   @override

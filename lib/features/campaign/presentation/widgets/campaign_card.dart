@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:vou_games/configs/games/game_type.dart';
 import 'package:vou_games/configs/lottie/app_lottie.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
 import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
@@ -41,6 +42,7 @@ class _CampaignCardState extends State<CampaignCard> {
   }
 
   bool isLoadingGameTypes = false;
+  List<String> gameTypesString = [];
 
   @override
   void initState() {
@@ -92,7 +94,7 @@ class _CampaignCardState extends State<CampaignCard> {
                 ),
                 Expanded(
                   child: ListView(
-                    children: widget.campaign.gameTypes.map((gameType) {
+                    children: gameTypesString.map((gameType) {
                       return Container(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
@@ -114,10 +116,10 @@ class _CampaignCardState extends State<CampaignCard> {
                               width: 40.0),
                           title: Center(child: Text(gameType)),
                           onTap: () {
-                            if (gameType == 'quiz') {
+                            if (gameType == real_time_quiz_string) {
                               context.read<QuizBloc>().add(PlayQuizEvent(
                                   campaignId: widget.campaign.id));
-                            } else {
+                            } else if (gameType == roll_dice_string) {
                               context.read<DiceBloc>().add(PlayDiceEvent(
                                   campaignId: widget.campaign.id));
                             }
@@ -143,72 +145,76 @@ class _CampaignCardState extends State<CampaignCard> {
           .inversePrimary, // Use theme color for background
       elevation: 4.0,
       margin: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Image.network(
-            widget.campaign.imageUrl,
-            width: double.infinity,
-            height: 200.0,
-            fit: BoxFit.cover,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.campaign.name,
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
+      child: BlocListener<GameBloc, GameState>(
+        listener: (context, state) {
+          if (state is GameTypesStringLoadedState &&
+              state.campaignId == widget.campaign.id) {
+            setState(() {
+              gameTypesString = state.gameTypesString;
+            });
+            isLoadingGameTypes = false;
+          } else if (state is GameTypesStringLoadingState &&
+              state.campaignId == widget.campaign.id) {
+            isLoadingGameTypes = true;
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Image.network(
+              widget.campaign.imageUrl,
+              width: double.infinity,
+              height: 200.0,
+              fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.campaign.name,
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: isJoinable()
-                      ? () {
-                          _showGameTypeBottomSheet(context);
-                        }
-                      : null,
-                  child: const Text('Join'),
-                ),
-              ],
+                  ElevatedButton(
+                    onPressed: isJoinable()
+                        ? () {
+                            _showGameTypeBottomSheet(context);
+                          }
+                        : null,
+                    child: const Text('Join'),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              getDueTime(),
-              style: const TextStyle(fontSize: 14.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                getDueTime(),
+                style: const TextStyle(fontSize: 14.0),
+              ),
             ),
-          ),
-          BlocBuilder<GameBloc, GameState>(
-            builder: (context, state) {
-              if (state is GameTypesStringLoadingState &&
-                  state.campaignId == widget.campaign.id) {
-                isLoadingGameTypes = true;
-                return const LinearProgressIndicator();
-              }
-
-              if (state is! GameTypesStringLoadedState || state.campaignId != widget.campaign.id || isLoadingGameTypes) {
-                return const SizedBox.shrink();
-              }
-
-              isLoadingGameTypes = false;
-
-              return Padding(
+            if (isLoadingGameTypes)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: LinearProgressIndicator(),
+              )
+            else
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Wrap(
                   spacing: 4.0,
                   runSpacing: 4.0,
-                  // campaigns game types string
-                  children: state.gameTypesString.map((gameType) {
+                  children: gameTypesString.map((gameType) {
                     Color chipColor;
                     switch (gameType) {
-                      case 'shake dice':
+                      case roll_dice_string:
                         chipColor = Colors.blue;
                         break;
-                      case 'quiz':
+                      case real_time_quiz_string:
                         chipColor = Colors.green;
                         break;
                       default:
@@ -228,49 +234,49 @@ class _CampaignCardState extends State<CampaignCard> {
                     );
                   }).toList(),
                 ),
-              );
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              widget.campaign.description,
-              style: const TextStyle(fontSize: 14.0),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                widget.campaign.description,
+                style: const TextStyle(fontSize: 14.0),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: [
-                    const Icon(Icons.location_pin),
-                    Text(widget.campaign.location),
-                  ],
-                ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.favorite,
-                        color: widget.campaign.liked ? Colors.red : Colors.grey,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    children: [
+                      const Icon(Icons.location_pin),
+                      Text(widget.campaign.location),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.favorite,
+                          color:
+                              widget.campaign.liked ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () {
+                          // Handle like button press
+                        },
                       ),
-                      onPressed: () {
-                        // Handle like button press
-                      },
-                    ),
-                    Text(
-                      widget.campaign.status == 'active'
-                          ? '${widget.campaign.likesCount} likes'
-                          : '${widget.campaign.participantsCount} participants',
-                    ),
-                  ],
-                ),
-              ],
+                      Text(
+                        widget.campaign.status == 'active'
+                            ? '${widget.campaign.likesCount} likes'
+                            : '${widget.campaign.participantsCount} participants',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

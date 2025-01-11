@@ -25,6 +25,17 @@ const Map<String, String> headers = {
   'Expires': '0',
 };
 
+Map<String, String> getAuthorizedHeaders(String? token) {
+  if(token == null) {
+    return headers;
+  }
+
+  return {
+    ...headers,
+    'Authorization': 'Bearer $token',
+  };
+}
+
 // --- Auth ---
 class Auth {
   static final String host = getHost();
@@ -42,4 +53,5 @@ class Campaign {
   static final String baseUrl = '$host$port$requestMapping';
   static final String campaigns = baseUrl;
   static final String search = '$baseUrl/search';
+  static final String game = '$baseUrl/{campaignId}/games';
 }

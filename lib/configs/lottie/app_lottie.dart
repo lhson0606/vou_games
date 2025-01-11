@@ -7,13 +7,12 @@ class AppLottie {
   static const String celebration = '${path}celebration.json';
 
   static String getPath(String key) {
-    switch (key) {
-      case 'shake dice':
-        return dice;
-      case 'quiz':
-        return quiz;
-      default:
-        return '';
+    if (key.toLowerCase().contains("quiz")){
+      return quiz;
+    } else if (key.toLowerCase().contains("shake")){
+      return shakePhone;
+    } else {
+      return dice;
     }
   }
 }

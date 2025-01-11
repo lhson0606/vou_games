@@ -15,6 +15,8 @@ class GameRepositoryImpl implements GameRepository {
 
   @override
   Future<Either<Failure, GameTypesStringEntity>> getCampaignGameTypesString(int campaignId) async {
+    final emptyGameTypesString = GameTypesStringEntity(campaignId: (campaignId), gameTypesString: const []);
+
     if (await networkInfo.isConnected
       .timeout(const Duration(seconds: 10), onTimeout: () => false)
     ) {
@@ -22,10 +24,10 @@ class GameRepositoryImpl implements GameRepository {
         final gameTypesString = await dataSource.getCampaignGameTypesString(campaignId);
         return Right(gameTypesString);
       } catch (e) {
-        return Left(ServerFailure());
+        return Right(emptyGameTypesString);
       }
     } else {
-      return Left(OfflineFailure());
+      return Right(emptyGameTypesString);
     }
   }
 }
