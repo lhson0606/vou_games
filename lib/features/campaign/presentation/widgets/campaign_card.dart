@@ -5,6 +5,7 @@ import 'package:vou_games/configs/games/game_type.dart';
 import 'package:vou_games/configs/lottie/app_lottie.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
 import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
+import 'package:vou_games/features/games/domain/entities/game_entity.dart';
 import 'package:vou_games/features/games/presentation/bloc/game_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 
@@ -42,7 +43,7 @@ class _CampaignCardState extends State<CampaignCard> {
   }
 
   bool isLoadingGameTypes = false;
-  List<String> gameTypesString = [];
+  List<GameEntity> games = [];
 
   @override
   void initState() {
@@ -94,7 +95,7 @@ class _CampaignCardState extends State<CampaignCard> {
                 ),
                 Expanded(
                   child: ListView(
-                    children: gameTypesString.map((gameType) {
+                    children: games.map((game) {
                       return Container(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
@@ -112,17 +113,20 @@ class _CampaignCardState extends State<CampaignCard> {
                           border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: ListTile(
-                          leading: Lottie.asset(AppLottie.getPath(gameType),
+                          leading: Lottie.asset(AppLottie.getPath(game.gameType.name),
                               width: 40.0),
-                          title: Center(child: Text(gameType)),
+                          title: Center(child: Text(game.gameType.name)),
                           onTap: () {
-                            if (gameType == real_time_quiz_string) {
+                            if (game.gameType.name == real_time_quiz_string) {
                               context.read<QuizBloc>().add(PlayQuizEvent(
                                   campaignId: widget.campaign.id));
-                            } else if (gameType == roll_dice_string) {
+                            } else if (game.gameType.name == roll_dice_string) {
                               context.read<DiceBloc>().add(PlayDiceEvent(
                                   campaignId: widget.campaign.id));
                             }
+
+                            // close the bottom sheet
+                            Navigator.pop(context);
                           },
                         ),
                       );
@@ -147,13 +151,13 @@ class _CampaignCardState extends State<CampaignCard> {
       margin: const EdgeInsets.all(8.0),
       child: BlocListener<GameBloc, GameState>(
         listener: (context, state) {
-          if (state is GameTypesStringLoadedState &&
+          if (state is CampaignGamesLoadedState &&
               state.campaignId == widget.campaign.id) {
             setState(() {
-              gameTypesString = state.gameTypesString;
+              games = state.games;
             });
             isLoadingGameTypes = false;
-          } else if (state is GameTypesStringLoadingState &&
+          } else if (state is CampaignGamesLoadingState &&
               state.campaignId == widget.campaign.id) {
             isLoadingGameTypes = true;
           }
@@ -208,9 +212,9 @@ class _CampaignCardState extends State<CampaignCard> {
                 child: Wrap(
                   spacing: 4.0,
                   runSpacing: 4.0,
-                  children: gameTypesString.map((gameType) {
+                  children: games.map((game) {
                     Color chipColor;
-                    switch (gameType) {
+                    switch (game.gameType.name) {
                       case roll_dice_string:
                         chipColor = Colors.blue;
                         break;
@@ -222,7 +226,7 @@ class _CampaignCardState extends State<CampaignCard> {
                     }
                     return Chip(
                       label: Text(
-                        gameType,
+                        game.gameType.name,
                         style: const TextStyle(fontSize: 12.0),
                       ),
                       shape: StadiumBorder(

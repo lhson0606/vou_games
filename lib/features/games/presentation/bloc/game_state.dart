@@ -7,23 +7,23 @@ final class GameInitial extends GameState {
   List<Object?> get props => [];
 }
 
-final class GameTypesStringLoadedState extends GameState {
+final class CampaignGamesLoadedState extends GameState {
   final int campaignId;
-  final List<String> gameTypesString;
+  final List<GameEntity> games;
 
-  GameTypesStringLoadedState({
+  CampaignGamesLoadedState({
     required this.campaignId,
-    required this.gameTypesString,
+    required this.games,
   });
 
   @override
-  List<Object?> get props => [campaignId, gameTypesString];
+  List<Object?> get props => [campaignId, games];
 }
 
-final class GameTypesStringLoadingState extends GameState {
+final class CampaignGamesLoadingState extends GameState {
   final int campaignId;
 
-  GameTypesStringLoadingState({
+  CampaignGamesLoadingState({
     required this.campaignId,
   });
 

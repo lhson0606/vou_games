@@ -3,7 +3,7 @@ import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
 import 'package:vou_games/features/games/data/datasources/game_data_source_contract.dart';
-import 'package:vou_games/features/games/domain/entities/game_types_string_entity.dart';
+import 'package:vou_games/features/games/domain/entities/game_entity.dart';
 import 'package:vou_games/features/games/domain/repositories/game_repository.dart';
 
 class GameRepositoryImpl implements GameRepository {
@@ -14,20 +14,19 @@ class GameRepositoryImpl implements GameRepository {
   GameRepositoryImpl({required this.dataSource, required this.networkInfo, required this.userCredentialService});
 
   @override
-  Future<Either<Failure, GameTypesStringEntity>> getCampaignGameTypesString(int campaignId) async {
-    final emptyGameTypesString = GameTypesStringEntity(campaignId: (campaignId), gameTypesString: const []);
+  Future<Either<Failure, List<GameEntity>>> getCampaignGames(int campaignId) async {
 
     if (await networkInfo.isConnected
       .timeout(const Duration(seconds: 10), onTimeout: () => false)
     ) {
       try {
-        final gameTypesString = await dataSource.getCampaignGameTypesString(campaignId);
-        return Right(gameTypesString);
+        final games = await dataSource.getCampaignGames(campaignId);
+        return Right(games);
       } catch (e) {
-        return Right(emptyGameTypesString);
+        return Right([]);
       }
     } else {
-      return Right(emptyGameTypesString);
+      return Right([]);
     }
   }
 }

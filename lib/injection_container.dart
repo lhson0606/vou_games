@@ -69,7 +69,7 @@ Future<void> init() async {
   sl.registerFactory(() => NotificationBloc(getUserNotificationUseCase: sl()));
   sl.registerFactory(() => UserBloc(getUserProfileUseCase: sl()));
   sl.registerFactory(() => HomepageNavigatorBloc());
-  sl.registerFactory(() => GameBloc(getCampaignGameTypesStringUseCase: sl()));
+  sl.registerFactory(() => GameBloc(getCampaignGamesUseCase: sl()));
   sl.registerFactory(() => QuizBloc());
   sl.registerFactory(() => DiceBloc());
   //============= UseCases =============
@@ -87,7 +87,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetAllUserVoucherUsecase(sl()));
   //----------------- Shop -----------------
   //----------------- Game -----------------
-  sl.registerLazySingleton(() => GetCampaignGameTypesStringUseCase(sl()));
+  sl.registerLazySingleton(() => GetCampaignGamesUseCase(sl()));
   //----------------- Notification -----------------
   sl.registerLazySingleton(() => GetUserNotificationUseCase(sl()));
   //----------------- User -----------------
