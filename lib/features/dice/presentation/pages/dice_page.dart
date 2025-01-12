@@ -1,22 +1,27 @@
+import 'dart:developer';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:vou_games/configs/lottie/app_lottie.dart';
+import 'package:vou_games/core/common/data/entities/game_item_entity.dart';
+import 'package:vou_games/features/dice/domain/entities/dice_result_entity.dart';
 import 'package:vou_games/features/dice/presentation/bloc/dice_bloc.dart';
 import '../../../../core/widgets/dialogues/confirm_dialogue.dart';
 
 class DicePage extends StatefulWidget {
   final int campaignId;
   final int gameId;
+
   const DicePage({super.key, required this.campaignId, required this.gameId});
 
   @override
   _DicePageState createState() => _DicePageState();
 }
 
-class _DicePageState extends State<DicePage> with SingleTickerProviderStateMixin {
+class _DicePageState extends State<DicePage>
+    with SingleTickerProviderStateMixin {
   bool _isSoundOn = true;
   bool _isShaking = false;
   int _diceValue = 1;
@@ -28,7 +33,7 @@ class _DicePageState extends State<DicePage> with SingleTickerProviderStateMixin
     super.initState();
     _animationController = AnimationController(vsync: this);
     userAccelerometerEventStream().listen(
-          (UserAccelerometerEvent event) {
+      (UserAccelerometerEvent event) {
         if (event.x.abs() > 2 || event.y.abs() > 2 || event.z.abs() > 2) {
           if (!_isShaking) {
             _isShaking = true;
@@ -113,7 +118,8 @@ class _DicePageState extends State<DicePage> with SingleTickerProviderStateMixin
                   Center(
                     child: Text(
                       'You rolled a $_diceValue!',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -128,6 +134,64 @@ class _DicePageState extends State<DicePage> with SingleTickerProviderStateMixin
                   ),
                 ],
               ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showCongratulationDialog(GameItemEntity? reward) {
+    if (reward == null) return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Congratulations!'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(reward.getDisplayImageUrl()),
+              const SizedBox(height: 16.0),
+              Text(
+                reward.getDisplayName(),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                reward.getDisplayDescription(),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLuckyNextTimeDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('You Lose!'),
+          content: const Text('Better luck next time!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
             ),
           ],
         );
@@ -161,96 +225,114 @@ class _DicePageState extends State<DicePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Dice'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(_isSoundOn ? Icons.volume_up : Icons.volume_off),
-                                  const SizedBox(width: 8.0),
-                                  Text(_isSoundOn ? 'Turn off sound' : 'Turn on sound'),
-                                ],
-                              ),
-                              Transform.scale(
-                                scale: 0.6,
-                                child: Switch(
-                                  value: _isSoundOn,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      _isSoundOn = value;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
+    return BlocListener<DiceBloc, DiceState>(
+      listener: (context, state) {
+        if (state is DiceRolledState) {
+          DiceResultEntity resultEntity = state.diceResult;
+
+          if (resultEntity.isPlayerWon) {
+            _showCongratulationDialog(resultEntity.reward);
+          } else {
+            _showLuckyNextTimeDialog();
+          }
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Dice'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(_isSoundOn
+                                        ? Icons.volume_up
+                                        : Icons.volume_off),
+                                    const SizedBox(width: 8.0),
+                                    Text(_isSoundOn
+                                        ? 'Turn off sound'
+                                        : 'Turn on sound'),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          const Divider(),
-                          ListTile(
-                            leading: const Icon(Icons.exit_to_app),
-                            title: const Text('Exit'),
-                            onTap: _showConfirmDialog,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            Center(
-              child: Lottie.asset(
-                AppLottie.diceRoll,
-                width: 200,
-                height: 200,
-                repeat: true,
-                controller: _animationController,
-                onLoaded: (composition) {
-                  _animationController.duration = composition.duration;
+                                Transform.scale(
+                                  scale: 0.6,
+                                  child: Switch(
+                                    value: _isSoundOn,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        _isSoundOn = value;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(),
+                            ListTile(
+                              leading: const Icon(Icons.exit_to_app),
+                              title: const Text('Exit'),
+                              onTap: _showConfirmDialog,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Attempts left: $_attemptsLeft',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ],
+          ),
+          body: Stack(
+            children: [
+              Center(
+                child: Lottie.asset(
+                  AppLottie.diceRoll,
+                  width: 200,
+                  height: 200,
+                  repeat: true,
+                  controller: _animationController,
+                  onLoaded: (composition) {
+                    _animationController.duration = composition.duration;
+                  },
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  onPressed: _attemptsLeft > 0 ? _showShakeDialog : null,
-                  child: const Text('Start'),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Attempts left: $_attemptsLeft',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ),
-          ],
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: _attemptsLeft > 0 ? _showShakeDialog : null,
+                    child: const Text('Start'),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

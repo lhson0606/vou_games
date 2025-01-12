@@ -1,5 +1,5 @@
 abstract class GameItemEntity {
-  final String id;
+  final int id;
 
   GameItemEntity({required this.id});
 

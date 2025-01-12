@@ -1,4 +1,5 @@
 import 'package:vou_games/core/network/json_model.dart';
+import 'package:vou_games/core/utils/strings/string_utils.dart';
 import 'package:vou_games/features/campaign/domain/entities/campaign_entity.dart';
 
 class CampaignModel extends CampaignEntity implements JsonModel{
@@ -15,8 +16,8 @@ class CampaignModel extends CampaignEntity implements JsonModel{
   factory CampaignModel.fromJson(Map<String, dynamic> json) {
     return CampaignModel(
       id: json['id'],
-      name: json['name'],
-      description: json['description'],
+      name: StringUtils.decodeVNString(json['name']),
+      description: StringUtils.decodeVNString(json['description']),
       imageUrl: json['imageUrl'],
       startDate: json['startDate'],
       endDate: json['endDate'],
