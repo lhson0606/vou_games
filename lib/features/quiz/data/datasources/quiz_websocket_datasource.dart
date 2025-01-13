@@ -62,6 +62,7 @@ class RealTimeQuizWebSocketDataSource implements QuizRealTimeDataSource {
 
 enum GameSessionState {
   NOT_STARTED,
+  GAME_STARTED,
   RECEIVING_NEW_QUESTION,
   RECEIVING_ANSWER,
   RECEIVING_RANKING,
@@ -77,6 +78,7 @@ class GameSession implements Disposable {
   GameSessionState state = GameSessionState.NOT_STARTED;
   Timer? _timer;
   int _timeRemaining = 10;
+  Timer? aliveTimer;
 
   GameSession({required this.gameId, required this.token});
 
@@ -95,6 +97,11 @@ class GameSession implements Disposable {
     this.controller = controller;
     channel?.stream.listen(
       (message) {
+        if (state == GameSessionState.GAME_STARTED) {
+          state = GameSessionState.RECEIVING_NEW_QUESTION;
+          controller.onQuizStarted();
+        }
+
         switch (state) {
           case GameSessionState.NOT_STARTED:
             _handleGameStart(message);
@@ -112,6 +119,8 @@ class GameSession implements Disposable {
             _handleReward(message);
             break;
           case GameSessionState.ENDED:
+            break;
+          default:
             break;
         }
       },
@@ -134,7 +143,11 @@ class GameSession implements Disposable {
 
     controller?.onSystemMessage(welcomeMessage);
     // game is now started, receiving first question
-    state = GameSessionState.RECEIVING_NEW_QUESTION;
+    state = GameSessionState.GAME_STARTED;
+
+    aliveTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      controller?.onPing();
+    });
   }
 
   void _handleNewQuestion(message) {
@@ -155,16 +168,19 @@ class GameSession implements Disposable {
 
   void _startTimer() {
     _timer?.cancel(); // Cancel any existing timer
-    _timeRemaining = 10; // Reset timer to 10 seconds
+    _timeRemaining = 8; // Reset timer to 10 seconds
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_timeRemaining > 0) {
         _timeRemaining--;
-        controller?.onTimeRemaining(_timeRemaining);
+        if (state == GameSessionState.RECEIVING_ANSWER) {
+          controller?.onTimeRemaining(_timeRemaining);
+        }
       } else {
         timer.cancel();
         // Handle timeout if needed
       }
     });
+    aliveTimer?.cancel();
   }
 
   void _handleAnswer(message) {
@@ -204,7 +220,6 @@ class GameSession implements Disposable {
 
       // no reward, game is now ended
       state = GameSessionState.ENDED;
-      controller?.onQuizEnded();
       // clean up
       onDispose();
     } catch (e) {
@@ -215,7 +230,6 @@ class GameSession implements Disposable {
 
   void _handleGameEnded() {
     state = GameSessionState.ENDED;
-    controller?.onSystemMessage("Game ended");
     onDispose();
   }
 
@@ -231,6 +245,7 @@ class GameSession implements Disposable {
 
   @override
   FutureOr onDispose() {
+    controller?.onQuizEnded();
     _timer?.cancel(); // Clean up the timer
     channel?.sink.close();
     channel = null;
@@ -238,5 +253,6 @@ class GameSession implements Disposable {
     state = GameSessionState.ENDED;
     gameId = -1;
     token = "";
+    aliveTimer?.cancel();
   }
 }

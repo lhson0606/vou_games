@@ -1,6 +1,6 @@
 part of 'quiz_bloc.dart';
 
-abstract class QuizState extends Equatable{}
+abstract class QuizState extends Equatable {}
 
 final class QuizInitialState extends QuizState {
   @override
@@ -20,7 +20,7 @@ final class RequestNavigateToQuizState extends QuizState {
 final class JoinQuizSuccessState extends QuizState {
   @override
   List<Object?> get props => [];
- }
+}
 
 final class JoinQuizFailureState extends QuizState {
   final String message;
@@ -75,4 +75,49 @@ final class ShowQuizRewardState extends QuizState {
 final class QuizEndedState extends QuizState {
   @override
   List<Object?> get props => [];
+}
+
+final class TimeRemainingState extends QuizState {
+  final int timeRemaining;
+
+  TimeRemainingState({required this.timeRemaining});
+
+  @override
+  List<Object?> get props => [timeRemaining];
+}
+
+final class QuizErrorState extends QuizState {
+  final String message;
+
+  QuizErrorState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+final class SystemMessageState extends QuizState {
+  final String message;
+
+  SystemMessageState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+final class QuizRankingState extends QuizState {
+  final RankEntity rank;
+
+  QuizRankingState({required this.rank});
+
+  @override
+  List<Object?> get props => [rank];
+}
+
+final class QuizRewardState extends QuizState {
+  final GameItemEntity reward;
+
+  QuizRewardState({required this.reward});
+
+  @override
+  List<Object?> get props => [reward];
 }

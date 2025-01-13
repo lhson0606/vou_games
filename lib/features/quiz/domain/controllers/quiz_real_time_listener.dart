@@ -13,5 +13,7 @@ abstract class QuizRealTimeListener extends Equatable {
   void onQuizRanking(RankEntity rank);
   void onQuizReward(GameItemEntity? reward);
   void onError(String welcomeMessage);
+  void onPing();
   void onQuizEnded();
+
 }

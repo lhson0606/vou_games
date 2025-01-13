@@ -38,77 +38,105 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
               JoinQuizFailureState(message: failureToErrorMessage(failure))),
           (connection) {
             if (connection.isConnected) {
-              setRealTimeQuizControllerUseCase(BlocQuizRealTimeListener(quizBloc: this));
+              setRealTimeQuizControllerUseCase(
+                  BlocQuizRealTimeListener(quizBloc: this));
               emit(JoinQuizSuccessState());
             } else {
               emit(JoinQuizFailureState(message: "Error"));
             }
           },
         );
+      } else if (event is ControllerSystemMessageEvent) {
+        emit(SystemMessageState(message: event.message));
+      } else if (event is ControllerQuizStartedEvent) {
+        emit(QuizStartedState());
+      } else if (event is ControllerNewQuizQuestionEvent) {
+        emit(NewQuizState(quiz: event.quiz));
+      } else if (event is ControllerQuizEndedEvent) {
+        emit(QuizEndedState());
+      } else if (event is ControllerQuizSolutionEvent) {
+        emit(ShowQuizSolutionState(ans: event.solution));
+      } else if (event is ControllerQuizStartedEvent) {
+        emit(QuizStartedState());
+      } else if (event is ControllerQuizRankingEvent) {
+        emit(QuizRankingState(rank: event.rank));
+      } else if (event is ControllerQuizRewardEvent) {
+        emit(QuizRewardState(reward: event.reward));
+      } else if (event is ControllerTimeRemainingEvent) {
+        emit(TimeRemainingState(timeRemaining: event.timeRemaining));
+      } else if (event is ControllerQuizErrorEvent) {
+        emit(QuizErrorState(message: event.message));
       }
     });
   }
 }
 
 class BlocQuizRealTimeListener extends QuizRealTimeListener {
-
   final QuizBloc quizBloc;
 
   BlocQuizRealTimeListener({required this.quizBloc});
+
+  String debugString = "";
 
   @override
   List<Object?> get props => [];
 
   @override
   void onSystemMessage(String message) {
-    print("Controller: " + message);
+    debugString += message.toString() + "\n";
+    quizBloc.add(ControllerSystemMessageEvent(message: message));
   }
 
   @override
   void onNewQuizQuestion(QuizEntity quiz) {
-    // TODO: implement onNewQuizQuestion
-    print("Controller: " + quiz.toString());
+    debugString += quiz.toString() + "\n";
+    quizBloc.add(ControllerNewQuizQuestionEvent(quiz: quiz));
   }
 
   @override
   void onQuizEnded() {
-    // TODO: implement onQuizEnded
-    print("Controller: " + "Quiz ended");
+    print(debugString);
+    quizBloc.add(ControllerQuizEndedEvent());
   }
 
   @override
   void onQuizQuestionAnswered(SolutionEntity ans) {
-    // TODO: implement onQuizQuestionAnswered
-    print("Controller: " + ans.toString());
+    debugString += ans.toString() + "\n";
+    quizBloc.add(ControllerQuizSolutionEvent(solution: ans));
   }
 
   @override
   void onQuizStarted() {
-    // TODO: implement onQuizStarted
-    print("Controller: " + "Quiz started");
+    debugString = 'quiz started' + "\n";
+    quizBloc.add(ControllerQuizStartedEvent());
   }
 
   @override
   void onQuizRanking(RankEntity rank) {
-    // TODO: implement onQuizRanking
-    print("Controller: " + rank.toString());
+    debugString += rank.toString() + "\n";
+    quizBloc.add(ControllerQuizRankingEvent(rank: rank));
   }
 
   @override
   void onQuizReward(GameItemEntity? reward) {
-    // TODO: implement onQuizReward
-    print("Controller: " + reward.toString());
+    debugString += reward.toString() + "\n";
+    quizBloc.add(ControllerQuizRewardEvent(reward: reward!));
   }
 
   @override
   void onTimeRemaining(int timeRemaining) {
-    // TODO: implement onTimeRemaining
-    print("Controller: " + timeRemaining.toString());
+    debugString += timeRemaining.toString() + " ";
+    quizBloc.add(ControllerTimeRemainingEvent(timeRemaining: timeRemaining));
   }
 
   @override
   void onError(String errorMessage) {
-    // TODO: implement onError
-    print("Controller: " + errorMessage);
+    debugString += errorMessage.toString() + "\n";
+    quizBloc.add(ControllerQuizErrorEvent(message: errorMessage));
+  }
+
+  @override
+  void onPing() {
+    print("alive");
   }
 }

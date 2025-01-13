@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:vou_games/features/quiz/presentation/pages/quiz_in_game_page.dart';
+
 class QuizLobbyPage extends StatefulWidget {
   final int campaignId;
   final int gameId;
@@ -66,7 +70,13 @@ class _QuizLobbyPageState extends State<QuizLobbyPage> {
         ? '00:00'
         : '${_timeLeft.inMinutes.toString().padLeft(2, '0')}:${(_timeLeft.inSeconds % 60).toString().padLeft(2, '0')}';
 
-    return Scaffold(
+    return BlocListener<QuizBloc, QuizState>(
+  listener: (context, state) {
+    if(state is QuizStartedState) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => QuizInGamePage()));
+    }
+  },
+  child: Scaffold(
       body: Center(
         child: Stack(
           alignment: Alignment.center,
@@ -94,6 +104,7 @@ class _QuizLobbyPageState extends State<QuizLobbyPage> {
           ],
         ),
       ),
-    );
+    ),
+);
   }
 }
