@@ -7,10 +7,15 @@ String getHost() {
   if(isDeployed) {
     return 'deployed host address here';
   }
-
-  if (Platform.isAndroid || Platform.isIOS) {
-    return 'http://10.0.2.2:';
-  } else {
+  try {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return 'http://10.0.2.2:';
+    } else {
+      return 'http://localhost:';
+    }
+  }
+  catch (e) {
+    // use default host if the platform is not recognized
     return 'http://localhost:';
   }
 }
