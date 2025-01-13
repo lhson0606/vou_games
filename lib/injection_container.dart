@@ -38,6 +38,18 @@ import 'package:vou_games/features/notification/data/repositories/notification_r
 import 'package:vou_games/features/notification/domain/repositories/notification_repository.dart';
 import 'package:vou_games/features/notification/domain/usecases/get_user_notification_usecase.dart';
 import 'package:vou_games/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:vou_games/features/quiz/data/datasources/quiz_ai_mc_datasource_contract.dart';
+import 'package:vou_games/features/quiz/data/datasources/quiz_datasource_contract.dart';
+import 'package:vou_games/features/quiz/data/datasources/quiz_http_datasource.dart';
+import 'package:vou_games/features/quiz/data/datasources/quiz_open_ai_mc_datasource.dart';
+import 'package:vou_games/features/quiz/data/datasources/quiz_real_time_datasource_contract.dart';
+import 'package:vou_games/features/quiz/data/datasources/quiz_websocket_datasource.dart';
+import 'package:vou_games/features/quiz/data/repositories/quiz_ai_mc_repository_impl.dart';
+import 'package:vou_games/features/quiz/data/repositories/quiz_repository_impl.dart';
+import 'package:vou_games/features/quiz/domain/repositories/quiz_ai_mc_repository.dart';
+import 'package:vou_games/features/quiz/domain/repositories/quiz_repository.dart';
+import 'package:vou_games/features/quiz/domain/usecases/connect_quiz_game_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/set_real_time_quiz_controller_usecase.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
 import 'package:vou_games/features/user/data/datasources/user_data_source_contract.dart';
@@ -56,7 +68,7 @@ import 'package:vou_games/features/voucher/presentation/bloc/voucher_bloc.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  //============= Features - posts =============
+  //============= Features =============
 
   //============= Bloc =============
   sl.registerFactory(() => AuthBloc(
@@ -73,7 +85,7 @@ Future<void> init() async {
   sl.registerFactory(() => UserBloc(getUserProfileUseCase: sl()));
   sl.registerFactory(() => HomepageNavigatorBloc());
   sl.registerFactory(() => GameBloc(getCampaignGamesUseCase: sl()));
-  sl.registerFactory(() => QuizBloc());
+  sl.registerFactory(() => QuizBloc(connectQuizGameUseCase: sl(), setRealTimeQuizControllerUseCase: sl()));
   sl.registerFactory(() => DiceBloc(rollDiceUseCase: sl()));
   //============= UseCases =============
   //----------------- Authentication -----------------
@@ -93,6 +105,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCampaignGamesUseCase(sl()));
   //----------------- Dice -----------------
   sl.registerLazySingleton(() => RollDiceUseCase(sl()));
+  //----------------- Quiz -----------------
+  sl.registerLazySingleton(() => ConnectQuizGameUseCase(quizRepository: sl()));
+  sl.registerLazySingleton(() => SetRealTimeQuizControllerUseCase(quizRepository: sl()));
   //----------------- Notification -----------------
   sl.registerLazySingleton(() => GetUserNotificationUseCase(sl()));
   //----------------- User -----------------
@@ -134,6 +149,16 @@ Future<void> init() async {
         sharedPreferencesService: sl(),
         userCredentialService: sl(),
       ));
+  sl.registerLazySingleton<QuizRepository>(() => QuizRepositoryImpl(
+        networkInfo: sl(),
+        userCredentialService: sl(),
+        quizDataSource: sl(),
+        quizRealTimeDataSource: sl(),
+      ));
+  sl.registerLazySingleton<QuizAIMCRepository>(() => QuizAIMCRepositoryImpl(
+        networkInfo: sl(),
+        quizAIMCDataSource: sl(),
+      ));
   //============= Datasources =============
   sl.registerLazySingleton<AuthDataSource>(() => AuthHttpDataSource());
   sl.registerLazySingleton<CampaignDataSource>(() => CampaignHttpDataSource());
@@ -141,9 +166,13 @@ Future<void> init() async {
   sl.registerLazySingleton<NotificationDataSource>(
       () => NotificationLocalDataSource());
   sl.registerLazySingleton<UserDataSource>(() => UserLocalDataSource());
-  sl.registerLazySingleton<GameDataSource>(() => GameHttpDataSource(userCredentialService: sl()));
-  sl.registerLazySingleton<DiceDataSource>(() => DiceHttpDataSource(userCredentialService: sl()));
-
+  sl.registerLazySingleton<GameDataSource>(
+      () => GameHttpDataSource(userCredentialService: sl()));
+  sl.registerLazySingleton<DiceDataSource>(
+      () => DiceHttpDataSource(userCredentialService: sl()));
+  sl.registerLazySingleton<QuizDataSource>(() => QuizHttpDataSource());
+  sl.registerLazySingleton<QuizRealTimeDataSource>(() => RealTimeQuizWebSocketDataSource());
+  sl.registerLazySingleton<QuizAIMCDataSource>(() => QuizOpenAIMCDataSource());
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => UserCredentialService());
@@ -153,25 +182,3 @@ Future<void> init() async {
   sl.registerLazySingleton(() => InternetConnection());
   sl.registerLazySingleton(() => SharedPreferencesService());
 }
-
-// void setupNavigationService() {
-//   NavigationService navigationService = sl<NavigationService>();
-//   final List<Destination> allDestinations = <Destination>[
-//     const Destination(0, 'Campaign', Icons.event, Colors.cyan),
-//     const Destination(1, 'Voucher', Icons.discount_outlined, Colors.orange),
-//     const Destination(2, 'Shop', Icons.location_pin, Colors.orange),
-//     const Destination(3, 'Notification', Icons.notifications, Colors.blue),
-//     const Destination(4, 'User', Icons.person, Colors.green),
-//   ];
-//   navigationService.registerFeature(
-//       allDestinations[0], const CampaignHomePage());
-//   navigationService.registerFeature(
-//       allDestinations[1], const VoucherHomepage());
-//   navigationService.registerFeature(allDestinations[2], const ShopHomepage());
-//   navigationService.registerFeature(
-//       allDestinations[3], const NotificationHomepage());
-//   navigationService.registerFeature(allDestinations[4], const UserHomepage());
-//
-//   navigationService.showNavigationBar();
-//   navigationService.setUp();
-// }

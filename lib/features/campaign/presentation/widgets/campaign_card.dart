@@ -119,7 +119,9 @@ class _CampaignCardState extends State<CampaignCard> {
                           onTap: () {
                             if (game.gameType.name == real_time_quiz_string) {
                               context.read<QuizBloc>().add(PlayQuizEvent(
-                                  campaignId: widget.campaign.id));
+                                  campaignId: widget.campaign.id,
+                                  gameId: game.id,
+                                  startAt: game.startAt ?? DateTime.now()));
                             } else if (game.gameType.name == roll_dice_string) {
                               context.read<DiceBloc>().add(PlayDiceEvent(
                                   campaignId: widget.campaign.id,

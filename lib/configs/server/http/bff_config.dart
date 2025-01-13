@@ -68,3 +68,7 @@ class ShakeGame {
   static final String baseUrl = '$host$port$requestMapping';
   static final String playShakeGame = '$baseUrl/shake';
 }
+
+class Quiz {
+  static final String host = getHost();
+}

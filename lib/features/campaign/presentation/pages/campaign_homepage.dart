@@ -37,60 +37,76 @@ class CampaignHomePageState extends State<CampaignHomePage> {
     });
   }
 
+  void reloadCampaigns() {
+    context.read<CampaignBloc>().add(GetUpComingCampaignEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SizedBox(
         child: Scaffold(
-          body: Column(
-            children: <Widget>[
-              AspectRatio(
-                aspectRatio: 175 / 53, // Adjust the aspect ratio as needed
-                child: SvgPicture.asset(
-                  AppVectors.campaign_homepage_bg,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      suffixIcon: Icon(Icons.clear),
-                      hintText: 'Search campaigns',
-                      border: OutlineInputBorder(),
+          body: Stack(
+            children: [
+              Column(
+                children: <Widget>[
+                  AspectRatio(
+                    aspectRatio: 175 / 53, // Adjust the aspect ratio as needed
+                    child: SvgPicture.asset(
+                      AppVectors.campaign_homepage_bg,
+                      fit: BoxFit.cover,
                     ),
-                    onChanged: (term) {
-                      searchCampaigns(term);
-                    }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          suffixIcon: Icon(Icons.clear),
+                          hintText: 'Search campaigns',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (term) {
+                          searchCampaigns(term);
+                        }),
+                  ),
+                  Expanded(
+                    child: BlocConsumer<CampaignBloc, CampaignState>(
+                      builder: (context, state) {
+                        if (state is LoadingCampaignState) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (state is CampaignsLoadedState) {
+                          return ListView.builder(
+                            itemCount: state.campaignList.length,
+                            itemBuilder: (context, index) {
+                              final campaign = state.campaignList[index];
+                              return CampaignCard(campaign: campaign);
+                            },
+                          );
+                        } else if (state is LoadingCampaignErrorState) {
+                          return Center(
+                            child: Text(state.error),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                      listener: (context, state) {
+                        if (state is LoadingCampaignErrorState) {
+                          showSnackBar(context, state.error,
+                              type: SnackBarType.error);
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                child: BlocConsumer<CampaignBloc, CampaignState>(
-                  builder: (context, state) {
-                    if (state is LoadingCampaignState) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is CampaignsLoadedState) {
-                      return ListView.builder(
-                        itemCount: state.campaignList.length,
-                        itemBuilder: (context, index) {
-                          final campaign = state.campaignList[index];
-                          return CampaignCard(campaign: campaign);
-                        },
-                      );
-                    } else if (state is LoadingCampaignErrorState) {
-                      return Center(
-                        child: Text(state.error),
-                      );
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                  listener: (context, state) {
-                    if (state is LoadingCampaignErrorState) {
-                      showSnackBar(context, state.error,
-                          type: SnackBarType.error);
-                    }
-                  },
+              Positioned(
+                top: 16.0,
+                right: 16.0,
+                child: FloatingActionButton(
+                  onPressed: reloadCampaigns,
+                  child: const Icon(Icons.refresh),
                 ),
               ),
             ],

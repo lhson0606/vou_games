@@ -1,7 +1,7 @@
 import 'package:vou_games/configs/server/http/bff_config.dart' as config;
 import 'package:intl/intl.dart';
 
-class UrlBuilderFactory {
+class HttpUrlBuilderFactory {
   static UpComingCampaignUrlBuilder createCampaignUrlBuilder() {
     return UpComingCampaignUrlBuilder();
   }

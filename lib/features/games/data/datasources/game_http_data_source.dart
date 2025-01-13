@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:vou_games/core/builders/url/url_builder.dart';
+import 'package:vou_games/core/builders/url/http_url_builder.dart';
 import 'package:vou_games/core/error/exceptions.dart';
 import 'package:vou_games/core/network/result_message.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
@@ -20,7 +20,7 @@ class GameHttpDataSource extends GameDataSource {
       throw NoUserException();
     }
 
-    final url = UrlBuilderFactory.createCampaignGameUrlBuilder()
+    final url = HttpUrlBuilderFactory.createCampaignGameUrlBuilder()
         .campaignId(campaignId)
         .build();
 
