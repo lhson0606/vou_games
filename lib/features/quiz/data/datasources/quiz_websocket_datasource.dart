@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:vou_games/configs/server/websocket/websocket_config.dart';
 import 'package:vou_games/core/builders/url/ws_url_builder.dart';
@@ -9,6 +10,7 @@ import 'package:vou_games/core/common/data/models/reward_piece_model.dart';
 import 'package:vou_games/core/common/data/models/reward_voucher_model.dart';
 import 'package:vou_games/core/error/exceptions.dart';
 import 'package:vou_games/features/quiz/data/datasources/quiz_real_time_datasource_contract.dart';
+import 'package:vou_games/features/quiz/data/models/player_answer_model.dart';
 import 'package:vou_games/features/quiz/data/models/quiz_connection_model.dart';
 import 'package:vou_games/features/quiz/data/models/quiz_model.dart';
 import 'package:vou_games/features/quiz/data/models/rank_model.dart';
@@ -58,6 +60,23 @@ class RealTimeQuizWebSocketDataSource implements QuizRealTimeDataSource {
       _gameSession.onDispose();
     }
   }
+
+  @override
+  Future<Unit> sendUserAnswer(
+      String token, int gameId, PlayerAnswerModel ans) async {
+    if (!_gameSession.hasSession()) {
+      throw ExceptionWithMessage("Connection not established");
+    }
+
+    final body = ans.toJsonString();
+
+    try {
+      _gameSession.channel?.sink.add(body);
+      return unit;
+    } catch (e) {
+      throw ExceptionWithMessage("Error sending answer");
+    }
+  }
 }
 
 enum GameSessionState {
@@ -77,6 +96,7 @@ class GameSession implements Disposable {
   String token;
   GameSessionState state = GameSessionState.NOT_STARTED;
   Timer? _timer;
+  final int maxTime = 10;
   int _timeRemaining = 10;
   Timer? aliveTimer;
 
@@ -168,7 +188,7 @@ class GameSession implements Disposable {
 
   void _startTimer() {
     _timer?.cancel(); // Cancel any existing timer
-    _timeRemaining = 8; // Reset timer to 10 seconds
+    _timeRemaining = maxTime; // Reset timer to 10 seconds
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_timeRemaining > 0) {
         _timeRemaining--;

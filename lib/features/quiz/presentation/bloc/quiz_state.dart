@@ -121,3 +121,13 @@ final class QuizRewardState extends QuizState {
   @override
   List<Object?> get props => [reward];
 }
+
+final class PlayerAnswerSuccessState extends QuizState {
+  final int gameId;
+  final PlayerAnswerEntity answer;
+
+  PlayerAnswerSuccessState({required this.gameId, required this.answer});
+
+  @override
+  List<Object?> get props => [gameId, answer];
+}

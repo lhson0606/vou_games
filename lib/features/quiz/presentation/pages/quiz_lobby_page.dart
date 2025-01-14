@@ -73,7 +73,7 @@ class _QuizLobbyPageState extends State<QuizLobbyPage> {
     return BlocListener<QuizBloc, QuizState>(
   listener: (context, state) {
     if(state is QuizStartedState) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => QuizInGamePage()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => QuizInGamePage(gameId: widget.gameId)));
     }
   },
   child: Scaffold(

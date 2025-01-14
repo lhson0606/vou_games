@@ -5,11 +5,13 @@ import 'package:vou_games/core/widgets/display/snack_bar.dart';
 import 'package:vou_games/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/rank_entity.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
-import 'package:vou_games/features/quiz/presentation/widgets/quiz_widget.dart';
+import 'package:vou_games/features/quiz/presentation/widgets/quiz_main_view.dart';
 import '../../../../core/widgets/dialogues/confirm_dialogue.dart';
 
 class QuizInGamePage extends StatefulWidget {
-  const QuizInGamePage({Key? key}) : super(key: key);
+  final int gameId;
+
+  const QuizInGamePage({super.key, required this.gameId});
 
   @override
   _QuizInGamePageState createState() => _QuizInGamePageState();
@@ -19,15 +21,6 @@ class _QuizInGamePageState extends State<QuizInGamePage> {
   bool _isSoundOn = true;
   bool _isGameEnded = false;
   GameItemEntity? _reward;
-  QuizEntity quiz = QuizEntity(
-    questionNumber: -1,
-    questionTitle: '',
-    questionContent: '',
-    answerA: '?',
-    answerB: '?',
-    answerC: '?',
-    answerD: '?',
-  );
 
   void _showConfirmDialog() {
     showDialog(
@@ -62,7 +55,8 @@ class _QuizInGamePageState extends State<QuizInGamePage> {
               const SizedBox(height: 16.0),
               Text(
                 reward.getDisplayName(),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8.0),
@@ -114,7 +108,8 @@ class _QuizInGamePageState extends State<QuizInGamePage> {
             children: [
               Text(
                 'Your rank: ${rank.rank}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8.0),
@@ -133,7 +128,7 @@ class _QuizInGamePageState extends State<QuizInGamePage> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                if(_reward != null) {
+                if (_reward != null) {
                   _showCongratulationDialog(_reward);
                 }
               },
@@ -147,95 +142,91 @@ class _QuizInGamePageState extends State<QuizInGamePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<QuizBloc, QuizState>(
-  listener: (context, state) {
-    if(state is QuizErrorState) {
-      showSnackBar(context, state.message, type: SnackBarType.error);
-    } else if (state is NewQuizState) {
-      setState(() {
-        quiz = state.quiz;
-      });
-    } else if(state is QuizEndedState) {
-      setState(() {
-        _isGameEnded = true;
-      });
-    } else if (state is QuizRewardState) {
-      setState(() {
-        _reward = state.reward;
-      });
-    } else if (state is SystemMessageState) {
-      showSnackBar(context, state.message, type: SnackBarType.info);
-    } else if(state is QuizRankingState) {
-      _showQuizRank(state.rank);
-    }
-  },
-  builder: (context, state) {
-
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Quiz In Game'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(_isSoundOn ? Icons.volume_up : Icons.volume_off),
-                                  const SizedBox(width: 8.0),
-                                  Text('Turn on sound'),
-                                ],
-                              ),
-                              Transform.scale(
-                                scale: 0.6, // Adjust the scale to make the switch smaller
-                                child: Switch(
-                                  value: _isSoundOn,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      _isSoundOn = value;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(), // Add a horizontal line
-                          ListTile(
-                            leading: const Icon(Icons.exit_to_app),
-                            title: const Text('Exit'),
-                            onTap: _showConfirmDialog,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            // if state is QuizEndedState, show the quit button
-            if (_isGameEnded)
+    return BlocListener<QuizBloc, QuizState>(
+      listener: (context, state) {
+        if (state is QuizErrorState) {
+          showSnackBar(context, state.message, type: SnackBarType.error);
+        } else if (state is QuizEndedState) {
+          setState(() {
+            _isGameEnded = true;
+          });
+        } else if (state is QuizRewardState) {
+          setState(() {
+            _reward = state.reward;
+          });
+        } else if (state is SystemMessageState) {
+          showSnackBar(context, state.message, type: SnackBarType.info);
+        } else if (state is QuizRankingState) {
+          _showQuizRank(state.rank);
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Quiz In Game'),
+            actions: [
               IconButton(
-                icon: const Icon(Icons.exit_to_app),
-                onPressed: _showQuitConfirmationDialog,
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(_isSoundOn
+                                        ? Icons.volume_up
+                                        : Icons.volume_off),
+                                    const SizedBox(width: 8.0),
+                                    Text('Turn on sound'),
+                                  ],
+                                ),
+                                Transform.scale(
+                                  scale: 0.6,
+                                  // Adjust the scale to make the switch smaller
+                                  child: Switch(
+                                    value: _isSoundOn,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        _isSoundOn = value;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(), // Add a horizontal line
+                            ListTile(
+                              leading: const Icon(Icons.exit_to_app),
+                              title: const Text('Exit'),
+                              onTap: _showConfirmDialog,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
-          ],
+              // if state is QuizEndedState, show the quit button
+              if (_isGameEnded)
+                IconButton(
+                  icon: const Icon(Icons.exit_to_app),
+                  onPressed: _showQuitConfirmationDialog,
+                ),
+            ],
+          ),
+          body: Center(child: QuizMainView(gameId: widget.gameId)),
         ),
-        body: QuizWidget(quiz: quiz),
       ),
     );
-  },
-);
   }
 }

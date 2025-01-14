@@ -80,6 +80,7 @@ class ControllerQuizRewardEvent extends QuizEvent {
 
 class ControllerTimeRemainingEvent extends QuizEvent {
   final int timeRemaining;
+
   ControllerTimeRemainingEvent({required this.timeRemaining});
 
   @override
@@ -95,11 +96,12 @@ class ControllerQuizErrorEvent extends QuizEvent {
   List<Object?> get props => [message];
 }
 
-class QuizAnswerEvent extends QuizEvent {
-  final String answer;
+class PlayerAnswerQuizEvent extends QuizEvent {
+  final int gameId;
+  final PlayerAnswerEntity answer;
 
-  QuizAnswerEvent({required this.answer});
+  PlayerAnswerQuizEvent({required this.gameId, required this.answer});
 
   @override
-  List<Object?> get props => [answer];
+  List<Object?> get props => [gameId, answer];
 }

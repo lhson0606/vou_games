@@ -5,11 +5,13 @@ import 'package:meta/meta.dart';
 import 'package:vou_games/core/common/data/entities/game_item_entity.dart';
 import 'package:vou_games/core/utils/failures/failure_utils.dart';
 import 'package:vou_games/features/quiz/domain/controllers/quiz_real_time_listener.dart';
+import 'package:vou_games/features/quiz/domain/entities/player_answer_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/quiz_connection_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/rank_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/solution_entity.dart';
 import 'package:vou_games/features/quiz/domain/usecases/connect_quiz_game_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/player_answer_quiz_usecase.dart';
 import 'package:vou_games/features/quiz/domain/usecases/set_real_time_quiz_controller_usecase.dart';
 import 'package:vou_games/features/quiz/presentation/pages/quiz_page.dart';
 
@@ -20,10 +22,12 @@ part 'quiz_state.dart';
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
   ConnectQuizGameUseCase connectQuizGameUseCase;
   SetRealTimeQuizControllerUseCase setRealTimeQuizControllerUseCase;
+  PlayerAnswerQuizUseCase playerAnswerQuizUseCase;
 
   QuizBloc(
       {required this.connectQuizGameUseCase,
-      required this.setRealTimeQuizControllerUseCase})
+      required this.setRealTimeQuizControllerUseCase,
+      required this.playerAnswerQuizUseCase})
       : super(QuizInitialState()) {
     on<QuizEvent>((event, emit) async {
       if (event is PlayQuizEvent) {
@@ -45,6 +49,15 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
               emit(JoinQuizFailureState(message: "Error"));
             }
           },
+        );
+      } else if (event is PlayerAnswerQuizEvent) {
+        final failureOrUnit =
+            await playerAnswerQuizUseCase(event.gameId, event.answer);
+        failureOrUnit.fold(
+          (failure) =>
+              emit(QuizErrorState(message: failureToErrorMessage(failure))),
+          (unit) => emit(PlayerAnswerSuccessState(
+              gameId: event.gameId, answer: event.answer)),
         );
       } else if (event is ControllerSystemMessageEvent) {
         emit(SystemMessageState(message: event.message));

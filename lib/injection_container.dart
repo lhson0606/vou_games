@@ -49,6 +49,7 @@ import 'package:vou_games/features/quiz/data/repositories/quiz_repository_impl.d
 import 'package:vou_games/features/quiz/domain/repositories/quiz_ai_mc_repository.dart';
 import 'package:vou_games/features/quiz/domain/repositories/quiz_repository.dart';
 import 'package:vou_games/features/quiz/domain/usecases/connect_quiz_game_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/player_answer_quiz_usecase.dart';
 import 'package:vou_games/features/quiz/domain/usecases/set_real_time_quiz_controller_usecase.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
@@ -85,7 +86,10 @@ Future<void> init() async {
   sl.registerFactory(() => UserBloc(getUserProfileUseCase: sl()));
   sl.registerFactory(() => HomepageNavigatorBloc());
   sl.registerFactory(() => GameBloc(getCampaignGamesUseCase: sl()));
-  sl.registerFactory(() => QuizBloc(connectQuizGameUseCase: sl(), setRealTimeQuizControllerUseCase: sl()));
+  sl.registerFactory(() => QuizBloc(
+      connectQuizGameUseCase: sl(),
+      setRealTimeQuizControllerUseCase: sl(),
+      playerAnswerQuizUseCase: sl()));
   sl.registerFactory(() => DiceBloc(rollDiceUseCase: sl()));
   //============= UseCases =============
   //----------------- Authentication -----------------
@@ -107,7 +111,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RollDiceUseCase(sl()));
   //----------------- Quiz -----------------
   sl.registerLazySingleton(() => ConnectQuizGameUseCase(quizRepository: sl()));
-  sl.registerLazySingleton(() => SetRealTimeQuizControllerUseCase(quizRepository: sl()));
+  sl.registerLazySingleton(
+      () => SetRealTimeQuizControllerUseCase(quizRepository: sl()));
+  sl.registerLazySingleton(() => PlayerAnswerQuizUseCase(quizRepository: sl()));
   //----------------- Notification -----------------
   sl.registerLazySingleton(() => GetUserNotificationUseCase(sl()));
   //----------------- User -----------------
@@ -171,7 +177,8 @@ Future<void> init() async {
   sl.registerLazySingleton<DiceDataSource>(
       () => DiceHttpDataSource(userCredentialService: sl()));
   sl.registerLazySingleton<QuizDataSource>(() => QuizHttpDataSource());
-  sl.registerLazySingleton<QuizRealTimeDataSource>(() => RealTimeQuizWebSocketDataSource());
+  sl.registerLazySingleton<QuizRealTimeDataSource>(
+      () => RealTimeQuizWebSocketDataSource());
   sl.registerLazySingleton<QuizAIMCDataSource>(() => QuizOpenAIMCDataSource());
   //============= Core =============
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

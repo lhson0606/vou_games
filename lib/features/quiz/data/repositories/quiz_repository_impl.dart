@@ -4,7 +4,9 @@ import 'package:vou_games/core/error/exceptions.dart';
 import 'package:vou_games/core/error/failures.dart';
 import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
+import 'package:vou_games/features/quiz/data/models/player_answer_model.dart';
 import 'package:vou_games/features/quiz/domain/controllers/quiz_real_time_listener.dart';
+import 'package:vou_games/features/quiz/domain/entities/player_answer_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/quiz_connection_entity.dart';
 import 'package:vou_games/features/quiz/domain/repositories/quiz_repository.dart';
 
@@ -53,14 +55,40 @@ class QuizRepositoryImpl implements QuizRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> setRealTimeQuizController(QuizRealTimeListener controller) {
+  Future<Either<Failure, Unit>> setRealTimeQuizListener(QuizRealTimeListener controller) async {
     try {
       quizRealTimeDataSource.setController(controller);
-      return Future.value(const Right(unit));
+      return const Right(unit);
     } on ExceptionWithMessage catch (e) {
-      return Future.value(Left(FailureWithMessage(message: e.message)));
+      return Left(FailureWithMessage(message: e.message));
     } on Exception {
-      return Future.value(Left(UnknownFailure()));
+      return Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> playerAnswerQuiz(int gameId, PlayerAnswerEntity ans) async {
+    if(!userCredentialService.isLoggedIn) {
+      return Left(NoUserFailure());
+    }
+
+    if (await networkInfo.isConnected
+        .timeout(const Duration(milliseconds: max_general_wait_time_ms),
+        onTimeout: () => false)) {
+      try {
+        final token = userCredentialService.userToken;
+        if (token == null) {
+          return Left(NoUserFailure());
+        }
+        await quizRealTimeDataSource.sendUserAnswer(token, gameId, PlayerAnswerModel.fromPlayerAnswerEntity(ans));
+        return const Right(unit);
+      } on ExceptionWithMessage catch (e) {
+        return Left(FailureWithMessage(message: e.message));
+      } on Exception {
+        return Left(UnknownFailure());
+      }
+    } else {
+      return Left(OfflineFailure());
     }
   }
 }

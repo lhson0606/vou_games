@@ -9,6 +9,6 @@ class SetRealTimeQuizControllerUseCase {
   SetRealTimeQuizControllerUseCase({required this.quizRepository});
 
   Future<Either<Failure, Unit>> call(QuizRealTimeListener controller) {
-    return quizRepository.setRealTimeQuizController(controller);
+    return quizRepository.setRealTimeQuizListener(controller);
   }
 }
