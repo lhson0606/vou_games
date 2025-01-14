@@ -128,7 +128,6 @@ class _QuizMainViewState extends State<QuizMainView> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -150,13 +149,15 @@ class _QuizMainViewState extends State<QuizMainView> {
                         ],
                       ),
                       const SizedBox(height: 16.0),
-                      Text(
-                        state.quiz.questionTitle,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      Center(
+                        child: Text(
+                          state.quiz.questionTitle,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                       // const SizedBox(height: 16.0),
                       // // Optional image
