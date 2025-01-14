@@ -131,3 +131,17 @@ final class PlayerAnswerSuccessState extends QuizState {
   @override
   List<Object?> get props => [gameId, answer];
 }
+
+final class AIMCSpeakingState extends QuizState {
+  final DateTime timeStamp = DateTime.now();
+
+  @override
+  List<Object?> get props => [timeStamp];
+}
+
+final class AIMcStopSpeakingState extends QuizState {
+  final DateTime timeStamp = DateTime.now();
+
+  @override
+  List<Object?> get props => [timeStamp];
+}

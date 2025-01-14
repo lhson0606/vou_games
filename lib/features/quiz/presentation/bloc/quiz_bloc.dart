@@ -1,18 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 import 'package:vou_games/core/common/data/entities/game_item_entity.dart';
 import 'package:vou_games/core/utils/failures/failure_utils.dart';
 import 'package:vou_games/features/quiz/domain/controllers/quiz_real_time_listener.dart';
 import 'package:vou_games/features/quiz/domain/entities/player_answer_entity.dart';
-import 'package:vou_games/features/quiz/domain/entities/quiz_connection_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/rank_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/solution_entity.dart';
 import 'package:vou_games/features/quiz/domain/usecases/connect_quiz_game_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/inform_ai_mc_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/new_mc_session_usecase.dart';
 import 'package:vou_games/features/quiz/domain/usecases/player_answer_quiz_usecase.dart';
 import 'package:vou_games/features/quiz/domain/usecases/set_real_time_quiz_controller_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/text_to_speech_usecase.dart';
 import 'package:vou_games/features/quiz/presentation/pages/quiz_page.dart';
 
 part 'quiz_event.dart';
@@ -23,11 +24,17 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   ConnectQuizGameUseCase connectQuizGameUseCase;
   SetRealTimeQuizControllerUseCase setRealTimeQuizControllerUseCase;
   PlayerAnswerQuizUseCase playerAnswerQuizUseCase;
+  InformAiMcUseCase informAiMcUseCase;
+  TextToSpeechUsecase textToSpeechUsecase;
+  NewMCSessionUseCase newMCSessionUseCase;
 
   QuizBloc(
       {required this.connectQuizGameUseCase,
       required this.setRealTimeQuizControllerUseCase,
-      required this.playerAnswerQuizUseCase})
+      required this.playerAnswerQuizUseCase,
+      required this.informAiMcUseCase,
+      required this.textToSpeechUsecase,
+      required this.newMCSessionUseCase})
       : super(QuizInitialState()) {
     on<QuizEvent>((event, emit) async {
       if (event is PlayQuizEvent) {
@@ -79,6 +86,10 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
         emit(TimeRemainingState(timeRemaining: event.timeRemaining));
       } else if (event is ControllerQuizErrorEvent) {
         emit(QuizErrorState(message: event.message));
+      } else if (event is AIMcSpeakingEvent) {
+        emit(AIMCSpeakingState());
+      } else if (event is AIMcStopSpeakingEvent) {
+        emit(AIMcStopSpeakingState());
       }
     });
   }
@@ -86,10 +97,10 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
 class BlocQuizRealTimeListener extends QuizRealTimeListener {
   final QuizBloc quizBloc;
+  String debugString = "";
 
   BlocQuizRealTimeListener({required this.quizBloc});
 
-  String debugString = "";
 
   @override
   List<Object?> get props => [];
@@ -103,6 +114,13 @@ class BlocQuizRealTimeListener extends QuizRealTimeListener {
   @override
   void onNewQuizQuestion(QuizEntity quiz) {
     debugString += quiz.toString() + "\n";
+    informMCAndReadResponse("Question number ${quiz.questionNumber}. \n"
+        "Question: ${quiz.questionTitle}. \n"
+        "Extra content: ${quiz.questionContent}. \n"
+        "Answer A: ${quiz.answerA}. \n"
+        "Answer B: ${quiz.answerB}. \n"
+        "Answer C: ${quiz.answerC}. \n"
+        "Answer D: ${quiz.answerD}. \n");
     quizBloc.add(ControllerNewQuizQuestionEvent(quiz: quiz));
   }
 
@@ -110,17 +128,24 @@ class BlocQuizRealTimeListener extends QuizRealTimeListener {
   void onQuizEnded() {
     print(debugString);
     quizBloc.add(ControllerQuizEndedEvent());
+    informMCAndReadResponse("The Quiz Game ended");
   }
 
   @override
   void onQuizQuestionAnswered(SolutionEntity ans) {
     debugString += ans.toString() + "\n";
     quizBloc.add(ControllerQuizSolutionEvent(solution: ans));
+    informMCAndReadResponse(
+        "The correct answer has been broadcast to all players:"
+        " The answer for question number ${ans.questionNumber}is: ${ans.correctAnswer}. "
+        "Explanation: ${ans.answerExplanation}.");
   }
 
   @override
-  void onQuizStarted() {
+  Future<void> onQuizStarted() async {
     debugString = 'quiz started' + "\n";
+    quizBloc.newMCSessionUseCase();
+    informMCAndReadResponse("The Quiz Game started");
     quizBloc.add(ControllerQuizStartedEvent());
   }
 
@@ -150,6 +175,21 @@ class BlocQuizRealTimeListener extends QuizRealTimeListener {
 
   @override
   void onPing() {
-    print("alive");
+    // informMCAndReadResponse("Say something random");
+  }
+
+  void informMCAndReadResponse(String message) async {
+    final failureOrMcResponses = await quizBloc.informAiMcUseCase(message);
+    failureOrMcResponses.fold(
+      (failure) => quizBloc.add(
+          ControllerQuizErrorEvent(message: failureToErrorMessage(failure))),
+      (mcResponses) async {
+        quizBloc.add(AIMcSpeakingEvent());
+        for (final mcResponse in mcResponses) {
+          await quizBloc.textToSpeechUsecase(mcResponse);
+        }
+        quizBloc.add(AIMcStopSpeakingEvent());
+      },
+    );
   }
 }

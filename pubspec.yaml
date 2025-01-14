@@ -57,6 +57,8 @@ dependencies:
   flutter_tts: ^4.2.1
   dart_openai: ^5.1.0
   websocket_universal: ^1.2.5
+  audioplayers: ^6.1.0
+  envied: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +70,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+
+  build_runner: ^2.4.14
+  envied_generator: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -90,6 +95,7 @@ flutter:
     - assets/svg/
     - assets/lottie/
     - assets/images/quiz_bg.jpg
+    - assets/audios/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

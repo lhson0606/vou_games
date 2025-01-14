@@ -1,11 +1,11 @@
 import 'dart:io';
 
-const isDeployed = bool.fromEnvironment('IS_DEPLOYED', defaultValue: false);
+const isDeployed = false;
 
 /// Get the host based on the platform because the emulator uses a different host than the physical device
 String getHost() {
   if(isDeployed) {
-    return 'deployed host address here';
+    return 'http://api.vougame.online';
   }
   try {
     if (Platform.isAndroid || Platform.isIOS) {
@@ -45,7 +45,7 @@ Map<String, String> getAuthorizedHeaders(String? token) {
 class Auth {
   static final String host = getHost();
   static const String requestMapping = '/api/auth';
-  static final String baseUrl = '$host$port$requestMapping';
+  static final String baseUrl = isDeployed? '$host$requestMapping' : '$host$port$requestMapping';
   static final String register = '$baseUrl/register';
   static final String verifyEmail = '$baseUrl/verify-email';
   static final String login = '$baseUrl/login';
@@ -55,7 +55,7 @@ class Auth {
 class Campaign {
   static final String host = getHost();
   static const String requestMapping = '/api/core/campaigns';
-  static final String baseUrl = '$host$port$requestMapping';
+  static final String baseUrl = isDeployed? '$host$requestMapping' : '$host$port$requestMapping';
   static final String campaigns = baseUrl;
   static final String search = '$baseUrl/search';
   static final String game = '$baseUrl/{campaignId}/games';
@@ -65,7 +65,7 @@ class Campaign {
 class ShakeGame {
   static final String host = getHost();
   static const String requestMapping = '/api/core/games';
-  static final String baseUrl = '$host$port$requestMapping';
+  static final String baseUrl = isDeployed? '$host$requestMapping' : '$host$port$requestMapping';
   static final String playShakeGame = '$baseUrl/shake';
 }
 

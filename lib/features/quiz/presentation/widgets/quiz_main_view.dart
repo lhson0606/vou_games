@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
+import 'package:vou_games/configs/audios/app_audios.dart';
+import 'package:vou_games/configs/lottie/app_lottie.dart';
+import 'package:vou_games/core/services/contract/audio_service_contract.dart';
 import 'package:vou_games/core/widgets/display/snack_bar.dart';
 import 'package:vou_games/features/quiz/domain/entities/player_answer_entity.dart';
 import 'package:vou_games/features/quiz/domain/entities/quiz_entity.dart';
@@ -7,6 +11,7 @@ import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/widgets/player_waiting_for_answer_view.dart';
 import 'package:vou_games/features/quiz/presentation/widgets/quiz_loading_view.dart';
 import 'package:vou_games/features/quiz/presentation/widgets/quiz_solution_view.dart';
+import 'package:vou_games/injection_container.dart' as di;
 
 class QuizMainView extends StatefulWidget {
   final int gameId;
@@ -17,7 +22,8 @@ class QuizMainView extends StatefulWidget {
   _QuizMainViewState createState() => _QuizMainViewState();
 }
 
-class _QuizMainViewState extends State<QuizMainView> {
+class _QuizMainViewState extends State<QuizMainView>
+    with SingleTickerProviderStateMixin {
   int timeLeft = 0;
   String userAnswer = '';
   bool userAnswered = false;
@@ -30,6 +36,22 @@ class _QuizMainViewState extends State<QuizMainView> {
     answerD: '',
     questionContent: '',
   );
+
+  final AudioService audioService = di.sl<AudioService>();
+
+  late final AnimationController _lottieController;
+
+  @override
+  void initState() {
+    super.initState();
+    _lottieController = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _lottieController.dispose();
+    super.dispose();
+  }
 
   String getUserAnswerContent(String answer, QuizEntity quiz) {
     if (answer == 'A') {
@@ -54,11 +76,29 @@ class _QuizMainViewState extends State<QuizMainView> {
         PlayerAnswerQuizEvent(gameId: widget.gameId, answer: answerEntity));
   }
 
-  void onPlayerAnswerCorrect() =>
-      showSnackBar(context, 'Correct answer!', type: SnackBarType.success);
+  void onPlayerAnswerCorrect() {
+    showSnackBar(context, 'Correct answer!', type: SnackBarType.success);
+    audioService.playAudio(AppAudios.correct);
+  }
 
-  void onPlayerAnswerWrong() =>
-      showSnackBar(context, 'Wrong answer!', type: SnackBarType.error);
+  void onPlayerAnswerWrong() {
+    showSnackBar(context, 'Wrong answer!', type: SnackBarType.error);
+    audioService.playAudio(AppAudios.wrong);
+  }
+
+  void onMcTalking() {
+    try {
+      _lottieController.repeat();
+      print('Mc talking');
+    } catch (e) {}
+  }
+
+  void onMcStopTalking() {
+    try {
+      _lottieController.reset();
+      print('Mc stop talking');
+    } catch (e) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +113,14 @@ class _QuizMainViewState extends State<QuizMainView> {
           current is NewQuizState ||
           current is ShowQuizSolutionState ||
           current is PlayerAnswerSuccessState ||
+          current is AIMCSpeakingState ||
+          current is AIMcStopSpeakingState ||
           current is QuizEndedState;
     }, listener: (context, state) {
       if (state is TimeRemainingState) {
         setState(() {
           timeLeft = state.timeRemaining;
+          audioService.playAudio(AppAudios.clock_tick);
         });
       } else if (state is NewQuizState) {
         setState(() {
@@ -86,6 +129,11 @@ class _QuizMainViewState extends State<QuizMainView> {
           timeLeft = 0;
         });
         userAnswered = false;
+
+        if (audioService.isPlaying()) {
+          audioService.stopAudio();
+          audioService.playAudio(AppAudios.game_background_loop);
+        }
       } else if (state is ShowQuizSolutionState) {
         if (userAnswer == state.ans.correctAnswer) {
           onPlayerAnswerCorrect();
@@ -98,6 +146,12 @@ class _QuizMainViewState extends State<QuizMainView> {
         });
 
         userAnswered = true;
+      } else if (state is AIMCSpeakingState) {
+        onMcTalking();
+      } else if (state is AIMcStopSpeakingState) {
+        onMcStopTalking();
+      } else if (state is QuizEndedState) {
+        audioService.playAudio(AppAudios.game_end);
       }
     }, builder: (context, state) {
       if (state is QuizEndedState) {
@@ -159,13 +213,17 @@ class _QuizMainViewState extends State<QuizMainView> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      // const SizedBox(height: 16.0),
-                      // // Optional image
-                      // Image.asset(
-                      //   'assets/question_image.png',
-                      //   height: 150,
-                      //   fit: BoxFit.cover,
-                      // ),
+                      Center(
+                        child: Lottie.asset(
+                          width: 252,
+                          height: 252,
+                          AppLottie.femaleMcTalking,
+                          controller: _lottieController,
+                          onLoaded: (composition) {
+                            _lottieController.duration = composition.duration;
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),

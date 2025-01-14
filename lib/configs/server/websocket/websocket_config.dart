@@ -1,11 +1,11 @@
 import 'dart:io';
 
-const isDeployed = bool.fromEnvironment('IS_DEPLOYED', defaultValue: false);
+const isDeployed = false;
 
 /// Get the host based on the platform because the emulator uses a different host than the physical device
 String getHost() {
   if(isDeployed) {
-    return 'deployed host address here';
+    return 'ws://api.vougame.online';
   }
   try {
     if (Platform.isAndroid || Platform.isIOS) {
@@ -44,5 +44,5 @@ Map<String, String> getWSAuthorizedHeaders(String? token) {
 class Quiz {
   static final String host = getHost();
   static const String requestMapping = '/quiz';
-  static final String baseUrl = '$host$port$requestMapping';
+  static String baseUrl = isDeployed? '$host$requestMapping' : '$host$port$requestMapping';
 }

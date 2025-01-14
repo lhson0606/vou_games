@@ -1,5 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:vou_games/core/services/audios/audio_service.dart';
+import 'package:vou_games/core/services/audios/tts_service.dart';
+import 'package:vou_games/core/services/contract/audio_service_contract.dart';
+import 'package:vou_games/core/services/contract/tts_service_contract.dart';
 import 'package:vou_games/core/services/network/network_info.dart';
 import 'package:vou_games/core/services/shared_preferences_service.dart';
 import 'package:vou_games/core/services/user_credential_service.dart';
@@ -49,8 +53,11 @@ import 'package:vou_games/features/quiz/data/repositories/quiz_repository_impl.d
 import 'package:vou_games/features/quiz/domain/repositories/quiz_ai_mc_repository.dart';
 import 'package:vou_games/features/quiz/domain/repositories/quiz_repository.dart';
 import 'package:vou_games/features/quiz/domain/usecases/connect_quiz_game_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/inform_ai_mc_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/new_mc_session_usecase.dart';
 import 'package:vou_games/features/quiz/domain/usecases/player_answer_quiz_usecase.dart';
 import 'package:vou_games/features/quiz/domain/usecases/set_real_time_quiz_controller_usecase.dart';
+import 'package:vou_games/features/quiz/domain/usecases/text_to_speech_usecase.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/shop/presentation/bloc/shop_bloc.dart';
 import 'package:vou_games/features/user/data/datasources/user_data_source_contract.dart';
@@ -89,7 +96,10 @@ Future<void> init() async {
   sl.registerFactory(() => QuizBloc(
       connectQuizGameUseCase: sl(),
       setRealTimeQuizControllerUseCase: sl(),
-      playerAnswerQuizUseCase: sl()));
+      playerAnswerQuizUseCase: sl(),
+      informAiMcUseCase: sl(),
+      textToSpeechUsecase: sl(),
+      newMCSessionUseCase: sl()));
   sl.registerFactory(() => DiceBloc(rollDiceUseCase: sl()));
   //============= UseCases =============
   //----------------- Authentication -----------------
@@ -114,6 +124,9 @@ Future<void> init() async {
   sl.registerLazySingleton(
       () => SetRealTimeQuizControllerUseCase(quizRepository: sl()));
   sl.registerLazySingleton(() => PlayerAnswerQuizUseCase(quizRepository: sl()));
+  sl.registerLazySingleton(() => InformAiMcUseCase(quizAIMCRepository: sl()));
+  sl.registerLazySingleton(() => TextToSpeechUsecase(ttsService: sl()));
+  sl.registerLazySingleton(() => NewMCSessionUseCase(quizRepository: sl()));
   //----------------- Notification -----------------
   sl.registerLazySingleton(() => GetUserNotificationUseCase(sl()));
   //----------------- User -----------------
@@ -184,8 +197,20 @@ Future<void> init() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
   sl.registerLazySingleton(() => UserCredentialService());
   //sl.registerLazySingleton(() => NavigationService());
+  sl.registerLazySingleton<AudioService>(() => AudioServiceImpl());
+  sl.registerLazySingleton<TtsService>(() => TtsServiceImpl());
 
   //============= External =================
   sl.registerLazySingleton(() => InternetConnection());
   sl.registerLazySingleton(() => SharedPreferencesService());
+
+  // set up
+  final openAIDataSource = sl<QuizAIMCDataSource>();
+  await openAIDataSource.init();
+
+  final ttsService = sl<TtsService>();
+  await ttsService.init();
+
+  final audioService = sl<AudioService>();
+  audioService.init();
 }

@@ -105,3 +105,17 @@ class PlayerAnswerQuizEvent extends QuizEvent {
   @override
   List<Object?> get props => [gameId, answer];
 }
+
+class AIMcSpeakingEvent extends QuizEvent {
+  final DateTime timestamp = DateTime.now();
+
+  @override
+  List<Object?> get props => [timestamp];
+}
+
+class AIMcStopSpeakingEvent extends QuizEvent {
+  final DateTime timestamp = DateTime.now();
+
+  @override
+  List<Object?> get props => [timestamp];
+}

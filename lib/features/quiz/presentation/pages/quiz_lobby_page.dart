@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vou_games/configs/audios/app_audios.dart';
+import 'package:vou_games/core/services/contract/audio_service_contract.dart';
 import 'package:vou_games/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:vou_games/features/quiz/presentation/pages/quiz_in_game_page.dart';
+import 'package:vou_games/injection_container.dart' as di;
 
 class QuizLobbyPage extends StatefulWidget {
   final int campaignId;
@@ -25,16 +28,26 @@ class _QuizLobbyPageState extends State<QuizLobbyPage> {
   late Duration _timeLeft;
   bool _isTimeUp = false;
   bool _isFlashing = false;
+  final AudioService audioService = di.sl<AudioService>();
 
-  final List<String> randomJoinQuotes = ['Let\' rock and roll!', 'Let\'s get started!', 'Let\'s do this!', 'Let\'s get it on!', 'Let\'s get it started!', 'Let\'s get it poppin'];
+  final List<String> randomJoinQuotes = [
+    'Let\' rock and roll!',
+    'Let\'s get started!',
+    'Let\'s do this!',
+    'Let\'s get it on!',
+    'Let\'s get it started!',
+    'Let\'s get it poppin'
+  ];
 
-  String get randomJoinQuote => randomJoinQuotes[DateTime.now().minute % randomJoinQuotes.length];
+  String get randomJoinQuote =>
+      randomJoinQuotes[DateTime.now().minute % randomJoinQuotes.length];
 
   @override
   void initState() {
     super.initState();
     _timeLeft = widget.startAt.difference(DateTime.now());
     _startTimer();
+    audioService.playAudio(AppAudios.waiting);
   }
 
   void _startTimer() {
@@ -71,40 +84,43 @@ class _QuizLobbyPageState extends State<QuizLobbyPage> {
         : '${_timeLeft.inMinutes.toString().padLeft(2, '0')}:${(_timeLeft.inSeconds % 60).toString().padLeft(2, '0')}';
 
     return BlocListener<QuizBloc, QuizState>(
-  listener: (context, state) {
-    if(state is QuizStartedState) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => QuizInGamePage(gameId: widget.gameId)));
-    }
-  },
-  child: Scaffold(
-      body: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            const SizedBox(
-                width: 252.0,
-                height: 252.0,
-                child: CircularProgressIndicator()),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  formattedTime,
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: _isTimeUp
-                        ? (_isFlashing ? Colors.red : Colors.transparent)
-                        : Colors.black,
+      listener: (context, state) {
+        if (state is QuizStartedState) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => QuizInGamePage(gameId: widget.gameId)));
+        }
+      },
+      child: Scaffold(
+        body: Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              const SizedBox(
+                  width: 252.0,
+                  height: 252.0,
+                  child: CircularProgressIndicator()),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    formattedTime,
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: _isTimeUp
+                          ? (_isFlashing ? Colors.red : Colors.transparent)
+                          : Colors.black,
+                    ),
                   ),
-                ),
-                Text(randomJoinQuote),
-              ],
-            ),
-          ],
+                  Text(randomJoinQuote),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-);
+    );
   }
 }
