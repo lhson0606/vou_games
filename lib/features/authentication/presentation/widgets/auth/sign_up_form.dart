@@ -35,13 +35,13 @@ class _SignUpFormState extends State<SignUpForm> {
   void initState() {
     super.initState();
     // for demo purposes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _usernameFieldKey.currentState!.setValue(initialUsername);
-      _emailFieldKey.currentState!.setValue(initialEmail);
-      _phoneNumberFieldKey.currentState!.setValue(initialPhoneNumber);
-      _passwordFieldKey.currentState!.setValue(initialPassword);
-      _confirmPasswordFieldKey.currentState!.setValue(initialPassword);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _usernameFieldKey.currentState!.setValue(initialUsername);
+    //   _emailFieldKey.currentState!.setValue(initialEmail);
+    //   _phoneNumberFieldKey.currentState!.setValue(initialPhoneNumber);
+    //   _passwordFieldKey.currentState!.setValue(initialPassword);
+    //   _confirmPasswordFieldKey.currentState!.setValue(initialPassword);
+    // });
   }
 
   bool _isFormValid() {
